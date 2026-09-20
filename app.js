@@ -3,6 +3,18 @@
 
   document.body.classList.add('js');
 
+  /* ---------- theme ---------- */
+
+  var themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark'
+        ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) { /* private mode */ }
+    });
+  }
+
   /* ---------- leaderboard: render metric cells, sort, unit toggle ---------- */
 
   var board = document.getElementById('board');
@@ -114,7 +126,11 @@
   var navLinks = document.querySelectorAll('.nav-links a');
   var targets = [];
   Array.prototype.forEach.call(navLinks, function (link) {
-    var el = document.querySelector(link.getAttribute('href'));
+    // The nav also holds a link off the page (the trace browser); only the
+    // in-page anchors have a section to observe.
+    var href = link.getAttribute('href');
+    if (!href || href.charAt(0) !== '#') return;
+    var el = document.querySelector(href);
     if (el) targets.push({ link: link, el: el });
   });
 

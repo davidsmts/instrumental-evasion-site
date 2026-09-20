@@ -1,2 +1,9 @@
 # Draft paper is under double-blind review — keep it out of the public repo.
 paper.pdf
+
+# Python bytecode from the trace build script.
+__pycache__/
+
+# Generated from the private resultstore; not published yet.
+# Rebuild with: python3 tools/build_traces.py --store <resultstore>
+traces/data/

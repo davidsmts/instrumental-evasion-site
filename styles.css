@@ -147,6 +147,30 @@ code {
 .nav-links a:hover { color: var(--text); background: var(--surface-2); }
 .nav-links a.current { color: var(--accent); background: var(--accent-faint); }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--accent-soft); }
+.theme-icon { width: 15px; height: 15px; }
+:root[data-theme="dark"] .theme-icon-sun { display: none; }
+:root:not([data-theme="dark"]) .theme-icon-moon { display: none; }
+
 .nav-cta {
   flex: none;
   font-size: 13.5px;
@@ -877,6 +901,20 @@ body.js .panel.is-active { display: block; }
 
 /* ========================= traces ========================= */
 
+/* The agent cell links into the trace browser without turning the
+   leaderboard into a wall of blue: colour stays, the rule appears on hover. */
+.board .agent a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent-soft);
+}
+.board .agent a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.trace-link {
+  margin: 14px 0 0;
+  font-size: 12.5px;
+}
+
 .trace-card {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1024,7 +1062,7 @@ footer {
 @media (max-width: 860px) {
   .nav-links { display: none; }
   .mark-text { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; }
-  .nav-cta { margin-left: auto; }
+  .nav-actions { margin-left: auto; }
   .cols-2 { columns: 1; }
   .grid-2 { grid-template-columns: 1fr; gap: 32px; }
   .flow-grid { grid-template-columns: 1fr; }
