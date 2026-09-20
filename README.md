@@ -1,10 +1,15 @@
 # Instrumental Monitor Evasion — results site
 
 Static site for *Instrumental Monitor Evasion Emerges Under Ordinary Task
-Pressure*. No build step, no dependencies: serve the folder and it works.
+Pressure* (Schmotz, Prinzhorn, Beurer-Kellner, Paulus, Prabhu, Andriushchenko).
+No build step, no dependencies: serve the folder and it works.
+
+The landing page stays deliberately thin — leaderboard, how a run works, the
+three routes agents take through the monitor, and the monitor diagnostics.
+Everything that needs depth lives in the paper or in the trace browser.
 
 ```
-index.html              the paper summary — findings, leaderboard, setup, ablations
+index.html              the paper summary — leaderboard, setup, routes, monitors
 styles.css, app.js      the landing page
 traces/index.html       catalog — agent × task-source matrix, filters, run tables
 traces/run.html         one run: event timeline, monitor decisions, setup & scoring
