@@ -3,6 +3,8 @@
 
   document.body.classList.add('js');
 
+  var copyBtn = document.getElementById('copyCite');
+
   /* ---------- theme ---------- */
 
   var themeToggle = document.getElementById('themeToggle');
@@ -20,6 +22,23 @@
   var board = document.getElementById('board');
   var unitToggle = document.getElementById('unitToggle');
 
+  /* German writes 60,0 % — decimal comma, and a space before the sign. */
+  function formatPercent(value) {
+    var text = value.toFixed(1);
+    if (I18N.lang() === 'de') return text.replace('.', ',') + '\u00a0%';
+    return text + '%';
+  }
+
+  function unitMode() {
+    return unitToggle && unitToggle.dataset.mode === 'count' ? 'count' : 'pct';
+  }
+
+  function paintUnitToggle() {
+    if (!unitToggle) return;
+    unitToggle.textContent = unitMode() === 'count'
+      ? I18N.t('lb.toggle.pct') : I18N.t('lb.toggle.counts');
+  }
+
   function renderBoard(mode) {
     if (!board) return;
     var rows = board.tBodies[0].rows;
@@ -33,7 +52,7 @@
         var pct = parseFloat(row.getAttribute('data-' + key));
         var label = mode === 'count'
           ? row.getAttribute('data-' + key + 'c')
-          : pct.toFixed(1) + '%';
+          : formatPercent(pct);
         cell.innerHTML =
           '<span class="metric-inner">' +
             '<span class="metric-bar"><i style="width:' + pct + '%"></i></span>' +
@@ -83,12 +102,19 @@
 
   if (unitToggle) {
     unitToggle.addEventListener('click', function () {
-      var next = unitToggle.dataset.mode === 'pct' ? 'count' : 'pct';
-      unitToggle.dataset.mode = next;
-      unitToggle.textContent = next === 'count' ? 'Show percentages' : 'Show counts';
-      renderBoard(next);
+      unitToggle.dataset.mode = unitMode() === 'pct' ? 'count' : 'pct';
+      paintUnitToggle();
+      renderBoard(unitMode());
     });
   }
+
+  /* The board and the two buttons carry text this script wrote, so they are
+     repainted on a language switch rather than by the translation pass. */
+  I18N.onChange(function () {
+    paintUnitToggle();
+    renderBoard(unitMode());
+    if (copyBtn) copyBtn.textContent = I18N.t('cite.copy');
+  });
 
   /* ---------- tabs ---------- */
 
@@ -110,13 +136,12 @@
 
   /* ---------- copy BibTeX ---------- */
 
-  var copyBtn = document.getElementById('copyCite');
   if (copyBtn && navigator.clipboard) {
     copyBtn.addEventListener('click', function () {
       var text = document.getElementById('bibtex').textContent;
       navigator.clipboard.writeText(text).then(function () {
-        copyBtn.textContent = 'Copied';
-        setTimeout(function () { copyBtn.textContent = 'Copy BibTeX'; }, 1600);
+        copyBtn.textContent = I18N.t('cite.copied');
+        setTimeout(function () { copyBtn.textContent = I18N.t('cite.copy'); }, 1600);
       });
     });
   }

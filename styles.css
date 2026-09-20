@@ -153,6 +153,35 @@ code {
   gap: 10px;
 }
 
+/* EN/DE switch: a segmented pair, sized to match the theme button. */
+.lang-toggle {
+  display: inline-flex;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.lang-btn {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 0 8px;
+  height: 28px;
+}
+.lang-btn:hover { color: var(--text); }
+.lang-btn.is-active { background: var(--accent-faint); color: var(--accent); }
+
+/* German runs long; the nav gives up the wordmark before the controls. */
+@media (max-width: 1040px) {
+  :root[data-lang="de"] .mark-text { display: none; }
+}
+
 .theme-toggle {
   display: inline-flex;
   flex: none;

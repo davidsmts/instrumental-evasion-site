@@ -8,9 +8,28 @@ The landing page stays deliberately thin — leaderboard, how a run works, the
 three routes agents take through the monitor, and the monitor diagnostics.
 Everything that needs depth lives in the paper or in the trace browser.
 
+## Languages
+
+The nav carries an EN/DE switch. English lives in `index.html` and is the
+source of truth: every translatable element carries a `data-i18n` key, the
+English markup is cached the first time a language is applied, and `i18n.js`
+holds only the German side — so a key missing from the dictionary falls back to
+English instead of vanishing. The choice persists in `localStorage` and can be
+forced with `?lang=de` or `?lang=en`.
+
+The paper title, author names, model names, task ids, the quoted system
+messages the agents actually saw and the `ALLOW`/`BLOCK` verdicts stay in
+English in both versions: they are cited artifacts, not prose. German switches
+number formatting too (`60,0 %`). Text that the scripts write themselves — the
+leaderboard's unit toggle, the BibTeX copy button — goes through `I18N.t()`,
+and `I18N.onChange()` repaints the board when the language flips.
+
+The trace browser under `traces/` is English only.
+
 ```
 index.html              the paper summary — leaderboard, setup, routes, monitors
 styles.css, app.js      the landing page
+i18n.js                 the German translation and the EN/DE switch
 traces/index.html       catalog — agent × task-source matrix, filters, run tables
 traces/run.html         one run: event timeline, monitor decisions, setup & scoring
 traces/assets/          styles.css, common.js, catalog.js, run.js
