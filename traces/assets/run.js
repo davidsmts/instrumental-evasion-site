@@ -1,8 +1,8 @@
 /* Run page: the event timeline, the monitor's decision log, and the setup.
 
    Focus mode hides the two things that make a long episode unreadable without
-   changing what happened — the model's private reasoning and the output of
-   calls that simply worked — and keeps everything that bears on the monitor:
+   changing what happened. The model's private reasoning and output from calls
+   that simply worked are omitted. Everything bearing on the monitor remains:
    every proposal, every verdict, every denial. */
 
 (function () {
@@ -195,8 +195,8 @@
     if (!DATA.decisions.length) {
       el.decisions.innerHTML = '<div class="empty-state"><p class="muted">' +
         'No monitor decision log was exported for this attempt. The recorded ' +
-        'totals — ' + IME.number(DATA.tool_calls) + ' tool calls, ' +
-        IME.number(DATA.blocked_calls) + ' of them blocked — come from the ' +
+        'totals: ' + IME.number(DATA.tool_calls) + ' tool calls, ' +
+        IME.number(DATA.blocked_calls) + ' of them blocked. They come from the ' +
         'episode record itself.</p></div>';
       return;
     }
@@ -210,17 +210,16 @@
       '<p class="muted">' + DATA.decisions.length + ' reviewed · ' + blocked +
       ' blocked · monitor ' + escapeHtml(DATA.monitor) + '</p></div>';
 
-    el.decisions.innerHTML = head + '<table class="decisions"><thead><tr>' +
-      '<th class="num">#</th><th>verdict</th><th>proposed call</th>' +
-      '<th>monitor reason</th></tr></thead><tbody>' +
+    el.decisions.innerHTML = head + '<div class="decision-list">' +
       DATA.decisions.map(function (d) {
-        return '<tr class="' + (d.blocked ? 'is-blocked' : '') + '">' +
-          '<td class="num">' + (d.i + 1) + '</td>' +
-          '<td><span class="tag ' + (d.blocked ? 'block' : 'allow') + '">' +
-            escapeHtml(d.decision) + '</span></td>' +
-          '<td><pre class="tool-cmd">' + escapeHtml(d.input) + '</pre></td>' +
-          '<td class="reason-cell">' + escapeHtml(d.reason || '—') + '</td></tr>';
-      }).join('') + '</tbody></table>';
+        return '<article class="decision-card' + (d.blocked ? ' is-blocked' : '') + '">' +
+          '<header><span class="decision-number">Call ' + (d.i + 1) + '</span>' +
+          '<span class="tag ' + (d.blocked ? 'block' : 'allow') + '">' +
+          escapeHtml(d.decision) + '</span></header>' +
+          '<pre class="tool-cmd">' + escapeHtml(d.input) + '</pre>' +
+          '<div class="decision-reason"><span>Monitor reason</span>' +
+          escapeHtml(d.reason || 'Not provided') + '</div></article>';
+      }).join('') + '</div>';
   }
 
   function definition(term, value) {
@@ -318,13 +317,13 @@
       : (DATA.solved ? 'task completed' : '');
 
     el.policy.innerHTML = '<span class="policy-label">prohibited step</span>' +
-      escapeHtml(DATA.key_step || DATA.policy || '—');
+      escapeHtml(DATA.key_step || DATA.policy || '–');
 
     var stats = [
       ['tool calls', IME.number(DATA.tool_calls)],
       ['blocked', IME.number(DATA.blocked_calls)],
       ['reviewed by monitor', DATA.decisions.length
-        ? IME.number(DATA.decisions.length) : '—'],
+        ? IME.number(DATA.decisions.length) : '–'],
       ['duration', IME.duration(DATA.seconds)],
       ['CLI invocations', IME.number(DATA.turns)],
       ['tokens', IME.compact(DATA.tokens)]

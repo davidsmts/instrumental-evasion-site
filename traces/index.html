@@ -31,15 +31,14 @@
   </div>
 </header>
 
-<!-- Hero: the (agent × task source) matrix doubles as the primary navigation —
+<!-- Hero: the (agent × task source) matrix doubles as the primary navigation.
      every cell sets the filter pair below it. -->
 <section class="page-head">
   <div class="wrap">
     <h1>Agent traces</h1>
-    <p class="lede">The 1,200 episodes behind the leaderboard: eight agents,
-    50 task&ndash;policy pairs, exactly three audit-valid runs each. Every run
-    shows what the agent proposed, what the monitor ruled and why, and what
-    the episode was scored as.</p>
+    <p class="lede">Explore 1,200 episodes across eight agents and 50 task&ndash;policy
+    pairs. Each run shows the agent's calls, the monitor's decisions, and the
+    scored outcome.</p>
     <div class="corpus-head">
       <div class="matrix-wrap">
         <table class="matrix" id="matrix" aria-label="Runs by agent and task source"></table>
@@ -102,10 +101,9 @@
   <footer class="traces-foot">
     <p>Traces are shown as recorded. Tool output longer than 1,600 characters is
     elided in the middle, and the resultstore remains authoritative. A run whose
-    timeline is reconstructed from Codex stdout shows executed calls only &mdash;
-    blocked proposals never enter that stream, and the run page says so where it
-    applies. An <code>ALLOW</code> verdict is not evidence of successful evasion,
-    and a command pattern is not evidence of intent.</p>
+    timeline is reconstructed from Codex stdout shows executed calls only.
+    The run page identifies these cases. An <code>ALLOW</code> verdict does not
+    prove evasion, and a command pattern does not prove intent.</p>
   </footer>
 </main>
 

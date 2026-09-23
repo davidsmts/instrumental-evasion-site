@@ -1,6 +1,6 @@
 /* Catalog page: the agent × task-source matrix, the filter dock, and the run
    tables under it. Filter state lives in the query string so any view is a
-   link — the leaderboard on the landing page links straight into it. */
+   link. The leaderboard on the landing page links straight into it. */
 
 (function () {
   var RUNS = [];
@@ -113,7 +113,7 @@
           ' data-model="' + IME.escapeHtml(model) + '"' +
           ' data-source="' + IME.escapeHtml(source) + '"' +
           ' title="' + evaded + ' of ' + cell.length + ' runs reached a ' +
-          'prohibited outcome — ' + IME.escapeHtml(model) + ' on ' +
+          'prohibited outcome: ' + IME.escapeHtml(model) + ' on ' +
           IME.escapeHtml(source) + '">' +
           '<span class="cell-rate">' + evaded + '/' + cell.length + '</span>' +
           '</button></td>';
@@ -142,7 +142,7 @@
     el.legend.innerHTML = 'runs reaching a prohibited outcome / runs in the cell ' +
       [0, 0.25, 0.5, 0.75, 1].map(function (r) {
         return '<span class="legend-swatch" style="background:' + shade(r) + '"></span>';
-      }).join('') + ' none → all · cells count runs, not tasks — the ' +
+      }).join('') + ' none → all · cells count runs, not tasks. The ' +
       'leaderboard\'s best-of-three rate is per task, over three runs each.';
   }
 
@@ -259,29 +259,33 @@
     return out;
   }
 
-  function runRow(run) {
-    return '<tr data-id="' + IME.escapeHtml(run.run_id) + '">' +
-      '<td><span class="verdict verdict-' + run.outcome + '" title="' +
-        IME.escapeHtml(IME.outcomeTitle(run.outcome)) + '">' +
-        IME.outcomeLabel(run.outcome) + '</span>' + chips(run) + '</td>' +
-      '<td>' + IME.escapeHtml(run.task_label) +
-        '<div class="run-sub">' + IME.escapeHtml(run.model_label) + ' · ' +
-        IME.escapeHtml(run.scaffold) + ' · run ' + (run.epoch + 1) + ' of 3</div></td>' +
-      '<td class="muted optional">' + IME.escapeHtml(run.key_step || '—') + '</td>' +
-      '<td class="num optional">' + IME.number(run.tool_calls) + '</td>' +
-      '<td class="num optional">' + IME.number(run.blocked_calls) + '</td>' +
-      '<td class="num optional">' + IME.duration(run.seconds) + '</td>' +
-      '<td class="num optional">' + IME.compact(run.tokens) + '</td>' +
-      '</tr>';
+  function runCard(run) {
+    var href = 'run.html?id=' + encodeURIComponent(run.run_id) +
+      '&back=' + encodeURIComponent(location.search.slice(1));
+    var metrics = [
+      ['calls', IME.number(run.tool_calls)],
+      ['blocked', IME.number(run.blocked_calls)],
+      ['time', IME.duration(run.seconds)],
+      ['tokens', IME.compact(run.tokens)]
+    ];
+    return '<a class="run-card" href="' + href + '">' +
+      '<div class="run-status"><span class="verdict verdict-' + run.outcome +
+        '" title="' + IME.escapeHtml(IME.outcomeTitle(run.outcome)) + '">' +
+        IME.outcomeLabel(run.outcome) + '</span>' +
+        '<span class="run-number">run ' + (run.epoch + 1) + ' of 3</span></div>' +
+      '<div class="run-copy"><h3>' + IME.escapeHtml(run.task_label) + '</h3>' +
+        '<p class="run-sub">' + IME.escapeHtml(run.model_label) + ' · ' +
+        IME.escapeHtml(run.source) + ' · ' + IME.escapeHtml(run.scaffold) + '</p>' +
+        '<p class="run-step"><span>Prohibited step</span>' +
+        IME.escapeHtml(run.key_step || 'Not recorded') + '</p>' +
+        (chips(run) ? '<div class="run-chips">' + chips(run) + '</div>' : '') +
+      '</div><dl class="run-metrics">' + metrics.map(function (metric) {
+        return '<div><dt>' + metric[0] + '</dt><dd>' + metric[1] + '</dd></div>';
+      }).join('') + '</dl><span class="run-open" aria-hidden="true">›</span></a>';
   }
 
-  function table(rows) {
-    return '<table class="runs"><thead><tr>' +
-      '<th>outcome</th><th>task &amp; agent</th>' +
-      '<th class="optional">prohibited step</th>' +
-      '<th class="num optional">calls</th><th class="num optional">blocked</th>' +
-      '<th class="num optional">duration</th><th class="num optional">tokens</th>' +
-      '</tr></thead><tbody>' + rows.map(runRow).join('') + '</tbody></table>';
+  function runList(rows) {
+    return '<div class="run-list">' + rows.map(runCard).join('') + '</div>';
   }
 
   function groupKeyOf(run, by) {
@@ -296,7 +300,7 @@
 
     if (by === 'none') {
       el.runs.innerHTML = '<div class="group"><div class="group-body">' +
-        table(rows.slice().sort(sorter)) + '</div></div>';
+        runList(rows.slice().sort(sorter)) + '</div></div>';
       return;
     }
 
@@ -335,7 +339,7 @@
         '<h2>' + IME.escapeHtml(key) + '</h2>' +
         '<span class="group-meta">' + bucket.length + ' run' +
         (bucket.length === 1 ? '' : 's') + ' · ' + evaded + ' evaded</span>' +
-        '</header><div class="group-body">' + table(bucket) + '</div></section>';
+        '</header><div class="group-body">' + runList(bucket) + '</div></section>';
     }).join('');
   }
 
@@ -383,11 +387,6 @@
     if (head) {
       head.parentElement.toggleAttribute('data-collapsed');
       return;
-    }
-    var row = event.target.closest('tr[data-id]');
-    if (row) {
-      location.href = 'run.html?id=' + encodeURIComponent(row.dataset.id) +
-        '&back=' + encodeURIComponent(location.search.slice(1));
     }
   });
 

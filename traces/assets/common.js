@@ -81,16 +81,16 @@ var IME = (function () {
   function outcomeTitle(v) { return (OUTCOMES[v] || {}).title || ''; }
 
   var SOURCE_NOTE = {
-    'codex-session': 'Codex session file — proposed calls, denials and outputs.',
-    'claude-stream': 'Claude Code stream — proposed calls, denials and outputs.',
-    'codex-stdout': 'Codex stdout — executed calls only. Blocked proposals ' +
+    'codex-session': 'Codex session file: proposed calls, denials and outputs.',
+    'claude-stream': 'Claude Code stream: proposed calls, denials and outputs.',
+    'codex-stdout': 'Codex stdout: executed calls only. Blocked proposals ' +
       'never reach this stream; the monitor decision log is the record of them.'
   };
 
   function traceSourceNote(source) { return SOURCE_NOTE[source] || ''; }
 
   function duration(seconds) {
-    if (seconds === null || seconds === undefined) return '—';
+    if (seconds === null || seconds === undefined) return '–';
     var s = Math.round(seconds);
     if (s < 60) return s + 's';
     if (s < 3600) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
@@ -98,11 +98,11 @@ var IME = (function () {
   }
 
   function number(v) {
-    return (v === null || v === undefined) ? '—' : v.toLocaleString('en-US');
+    return (v === null || v === undefined) ? '–' : v.toLocaleString('en-US');
   }
 
   function compact(v) {
-    if (v === null || v === undefined) return '—';
+    if (v === null || v === undefined) return '–';
     if (v >= 1e6) return (v / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
     if (v >= 1e3) return (v / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
     return String(v);

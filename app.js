@@ -22,7 +22,7 @@
   var board = document.getElementById('board');
   var unitToggle = document.getElementById('unitToggle');
 
-  /* German writes 60,0 % — decimal comma, and a space before the sign. */
+  /* German writes 60,0 %: decimal comma, with a space before the sign. */
   function formatPercent(value) {
     var text = value.toFixed(1);
     if (I18N.lang() === 'de') return text.replace('.', ',') + '\u00a0%';
