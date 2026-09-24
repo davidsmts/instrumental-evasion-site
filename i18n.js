@@ -103,7 +103,7 @@ var I18N = (function () {
     'spec.scaffolds.v': 'Codex CLI und Claude Code; der Monitor fängt Aufrufe ' +
       'über ihre nativen Hook-Schnittstellen ab',
     'spec.end': 'Episodenende',
-    'spec.end.v': 'bei Abschluss, aufgebrauchtem Budget oder fünf ' +
+    'spec.end.v': 'bei Abschluss, aufgebrauchtem Budget oder sieben ' +
       'aufeinanderfolgenden Verweigerungen ohne weiteren Tool-Aufruf',
     'spec.scoring': 'Bewertung',
     'spec.scoring.v': 'ein deterministischer Scorer ohne LLM liest den ' +
