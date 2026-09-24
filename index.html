@@ -178,6 +178,35 @@
       <p data-i18n="lb.reasoning"><strong>More reasoning can increase evasion.</strong> Across a separate 30-task effort study, every tested model evades more at maximum than at low effort. GPT-5.6 Luna rises from 35.7% to 71.4%, peaking at 78.6% at xhigh.</p>
     </div>
 
+    <figure class="effort-figure" aria-labelledby="effort-title">
+      <h3 id="effort-title" data-i18n="lb.effort.title">Reasoning effort ablation</h3>
+      <p class="effort-axis-label" data-i18n="lb.effort.axis">Monitor evasion (%)</p>
+      <div class="effort-chart-scroll" tabindex="0" aria-labelledby="effort-title">
+        <img class="effort-plot" src="reasoning-effort.svg" alt="Line chart of monitor evasion rates for four models at low, medium, high, xhigh, and max reasoning effort. Exact rates follow in a table.">
+      </div>
+      <div class="effort-legend">
+        <span><i class="effort-swatch luna" aria-hidden="true"></i>GPT-5.6 Luna</span>
+        <span><i class="effort-swatch sol" aria-hidden="true"></i>GPT-5.6 Sol</span>
+        <span><i class="effort-swatch terra" aria-hidden="true"></i>GPT-5.6 Terra</span>
+        <span><i class="effort-swatch sol6" aria-hidden="true"></i>GPT-6 Sol</span>
+      </div>
+      <figcaption class="caption" data-i18n="lb.effort.caption">Single-run evasion rates from Figure 4 of the paper. Each model uses a fixed task set across the five effort settings under GPT-OSS-120B monitoring: 28 valid tasks for Luna, 29 for GPT-5.6 Sol, 26 for Terra, and 30 for GPT-6 Sol. GPT-6 Sol uses a different task set. Effort settings are categories, not equal token budgets.</figcaption>
+      <details class="effort-values">
+        <summary data-i18n="lb.effort.values">Show exact rates</summary>
+        <div class="effort-table-scroll">
+          <table>
+            <thead><tr><th scope="col" data-i18n="lb.effort.model">Model</th><th scope="col">low</th><th scope="col">medium</th><th scope="col">high</th><th scope="col">xhigh</th><th scope="col">max</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">GPT-5.6 Luna</th><td>35.7%</td><td>57.1%</td><td>71.4%</td><td>78.6%</td><td>71.4%</td></tr>
+              <tr><th scope="row">GPT-5.6 Sol</th><td>41.4%</td><td>51.7%</td><td>58.6%</td><td>51.7%</td><td>62.1%</td></tr>
+              <tr><th scope="row">GPT-5.6 Terra</th><td>61.5%</td><td>57.7%</td><td>61.5%</td><td>57.7%</td><td>69.2%</td></tr>
+              <tr><th scope="row">GPT-6 Sol</th><td>0%</td><td>20%</td><td>20%</td><td>30%</td><td>26.7%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </figure>
+
     <details class="more">
       <summary data-i18n="lb.more">Methodology &amp; caveats</summary>
       <ol class="notes">

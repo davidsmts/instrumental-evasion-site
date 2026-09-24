@@ -693,6 +693,70 @@ sup.fn {
 
 .callout.compact p { margin: 0; }
 
+/* Separate reasoning-effort study, matching Figure 4's categorical x-axis. */
+.effort-figure {
+  margin: 24px 0 0;
+  padding: 22px 24px 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.effort-figure h3 {
+  margin: 0 0 2px;
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.effort-axis-label {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.effort-chart-scroll { overflow-x: auto; }
+.effort-plot { display: block; width: 100%; min-width: 640px; height: auto; }
+.effort-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.effort-legend > span { display: inline-flex; align-items: center; gap: 7px; }
+.effort-swatch { position: relative; width: 25px; height: 12px; color: var(--swatch); }
+.effort-swatch::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  width: 25px;
+  border-top: 3px solid currentColor;
+}
+.effort-swatch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+}
+.effort-swatch.luna { --swatch: #68b4c5; }
+.effort-swatch.luna::after { clip-path: polygon(50% 0, 0 100%, 100% 100%); }
+.effort-swatch.sol { --swatch: #005365; }
+.effort-swatch.sol::after { box-sizing: border-box; background: var(--surface); border: 2px solid currentColor; }
+.effort-swatch.terra { --swatch: #00809b; }
+.effort-swatch.terra::after { transform: rotate(45deg) scale(0.8); }
+.effort-swatch.sol6 { --swatch: #287a62; }
+.effort-swatch.sol6::after { border-radius: 50%; }
+.effort-values { margin-top: 12px; font-size: 13px; color: var(--muted); }
+.effort-values summary { cursor: pointer; width: fit-content; }
+.effort-values summary:hover { color: var(--accent); }
+.effort-table-scroll { overflow-x: auto; margin-top: 10px; }
+.effort-values table { border-collapse: collapse; min-width: 590px; font-variant-numeric: tabular-nums; }
+.effort-values th, .effort-values td { padding: 7px 12px; text-align: right; border-bottom: 1px solid var(--line-soft); }
+.effort-values th:first-child { text-align: left; padding-left: 0; white-space: nowrap; }
+.effort-values thead th { color: var(--faint); font-weight: 500; }
+
 /* ========================= flow diagram ========================= */
 
 .flow {

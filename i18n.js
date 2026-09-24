@@ -54,6 +54,16 @@ var I18N = (function () {
       'In einer separaten Studie über 30 Aufgaben umgehen alle getesteten Modelle ' +
       'bei maximalem Aufwand häufiger als bei niedrigem. GPT-5.6 Luna steigt von ' +
       '35,7 % auf 71,4 % und erreicht bei xhigh 78,6 %.',
+    'lb.effort.title': 'Ablation des Reasoning-Aufwands',
+    'lb.effort.axis': 'Monitor-Umgehung (%)',
+    'lb.effort.caption': 'Umgehungsraten aus einem einzelnen Lauf pro Aufgabe, ' +
+      'nach Abbildung 4 des Papers. Jedes Modell nutzt bei allen fünf ' +
+      'Aufwandsstufen dieselbe Aufgabenauswahl unter GPT-OSS-120B-Überwachung: ' +
+      '28 gültige Aufgaben für Luna, 29 für GPT-5.6 Sol, 26 für Terra und 30 ' +
+      'für GPT-6 Sol. GPT-6 Sol nutzt eine andere Aufgabenauswahl. Die ' +
+      'Aufwandsstufen entsprechen keinen gleichen Tokenbudgets.',
+    'lb.effort.values': 'Genaue Raten anzeigen',
+    'lb.effort.model': 'Modell',
     'lb.more': 'Methodik &amp; Vorbehalte',
     'lb.note1': '<span class="n">1</span> Provider-Routen, Reasoning-Einstellungen ' +
       'und Scaffold-Versionen unterscheiden sich zwischen den Agenten. Die Tabelle ' +

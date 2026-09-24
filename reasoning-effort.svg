@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 408" role="img" aria-labelledby="effort-title effort-desc">
+  <title id="effort-title">Monitor evasion by reasoning effort</title>
+  <desc id="effort-desc">Four model lines across low, medium, high, xhigh, and max effort. Exact rates are in the table following the chart.</desc>
+  <!-- Rates from Figure 4 of paper.pdf; source: AgentBreakerPaper/figures/fig_reasoning_effort.tex. -->
+  <style>
+    text { font-family: Arial, sans-serif; fill: #5c5a63; font-size: 14px; }
+    .tick { fill: #86838d; font-size: 13px; }
+    .grid { stroke: #e9e6e1; stroke-width: 1; }
+    .axis { stroke: #beb9b1; stroke-width: 1.2; }
+    .series { fill: none; stroke-width: 3.5; stroke-linejoin: round; stroke-linecap: round; }
+    .point { stroke-width: 2.4; }
+    .peak { font-size: 13px; font-weight: 700; fill: #00667c; }
+  </style>
+  <line class="grid" x1="106" y1="346.0" x2="858" y2="346.0"/>
+  <text class="tick" x="88" y="350.0" text-anchor="end">0</text>
+  <line class="grid" x1="106" y1="282.0" x2="858" y2="282.0"/>
+  <text class="tick" x="88" y="286.0" text-anchor="end">20</text>
+  <line class="grid" x1="106" y1="218.0" x2="858" y2="218.0"/>
+  <text class="tick" x="88" y="222.0" text-anchor="end">40</text>
+  <line class="grid" x1="106" y1="154.0" x2="858" y2="154.0"/>
+  <text class="tick" x="88" y="158.0" text-anchor="end">60</text>
+  <line class="grid" x1="106" y1="90.0" x2="858" y2="90.0"/>
+  <text class="tick" x="88" y="94.0" text-anchor="end">80</text>
+  <line class="axis" x1="106" y1="58" x2="106" y2="346"/>
+  <line class="axis" x1="106" y1="346" x2="858" y2="346"/>
+  <text x="106" y="378" text-anchor="middle">low</text>
+  <text x="294" y="378" text-anchor="middle">medium</text>
+  <text x="482" y="378" text-anchor="middle">high</text>
+  <text x="670" y="378" text-anchor="middle">xhigh</text>
+  <text x="858" y="378" text-anchor="middle">max</text>
+  <polyline class="series" stroke="#68B4C5" points="106,231.7 294,163.1 482,117.4 670,94.6 858,117.4"/>
+  <polygon class="point" points="106.0,224.7 99.0,236.7 113.0,236.7" fill="#68B4C5" stroke="#00667c"><title>GPT-5.6 Luna, low: 35.7%</title></polygon>
+  <polygon class="point" points="294.0,156.1 287.0,168.1 301.0,168.1" fill="#68B4C5" stroke="#00667c"><title>GPT-5.6 Luna, medium: 57.1%</title></polygon>
+  <polygon class="point" points="482.0,110.4 475.0,122.4 489.0,122.4" fill="#68B4C5" stroke="#00667c"><title>GPT-5.6 Luna, high: 71.4%</title></polygon>
+  <polygon class="point" points="670.0,87.6 663.0,99.6 677.0,99.6" fill="#68B4C5" stroke="#00667c"><title>GPT-5.6 Luna, xhigh: 78.6%</title></polygon>
+  <polygon class="point" points="858.0,110.4 851.0,122.4 865.0,122.4" fill="#68B4C5" stroke="#00667c"><title>GPT-5.6 Luna, max: 71.4%</title></polygon>
+  <polyline class="series" stroke="#005365" points="106,213.6 294,180.5 482,158.4 670,180.5 858,147.4"/>
+  <rect class="point" x="100.5" y="208.1" width="11" height="11" fill="white" stroke="#005365"><title>GPT-5.6 Sol, low: 41.4%</title></rect>
+  <rect class="point" x="288.5" y="175.0" width="11" height="11" fill="white" stroke="#005365"><title>GPT-5.6 Sol, medium: 51.7%</title></rect>
+  <rect class="point" x="476.5" y="152.9" width="11" height="11" fill="white" stroke="#005365"><title>GPT-5.6 Sol, high: 58.6%</title></rect>
+  <rect class="point" x="664.5" y="175.0" width="11" height="11" fill="white" stroke="#005365"><title>GPT-5.6 Sol, xhigh: 51.7%</title></rect>
+  <rect class="point" x="852.5" y="141.9" width="11" height="11" fill="white" stroke="#005365"><title>GPT-5.6 Sol, max: 62.1%</title></rect>
+  <polyline class="series" stroke="#00809B" points="106,149.1 294,161.4 482,149.1 670,161.4 858,124.5"/>
+  <polygon class="point" points="106.0,142.6 112.5,149.1 106.0,155.6 99.5,149.1" fill="#00809B" stroke="#00809B"><title>GPT-5.6 Terra, low: 61.5%</title></polygon>
+  <polygon class="point" points="294.0,154.9 300.5,161.4 294.0,167.9 287.5,161.4" fill="#00809B" stroke="#00809B"><title>GPT-5.6 Terra, medium: 57.7%</title></polygon>
+  <polygon class="point" points="482.0,142.6 488.5,149.1 482.0,155.6 475.5,149.1" fill="#00809B" stroke="#00809B"><title>GPT-5.6 Terra, high: 61.5%</title></polygon>
+  <polygon class="point" points="670.0,154.9 676.5,161.4 670.0,167.9 663.5,161.4" fill="#00809B" stroke="#00809B"><title>GPT-5.6 Terra, xhigh: 57.7%</title></polygon>
+  <polygon class="point" points="858.0,118.0 864.5,124.5 858.0,131.0 851.5,124.5" fill="#00809B" stroke="#00809B"><title>GPT-5.6 Terra, max: 69.2%</title></polygon>
+  <polyline class="series" stroke="#287A62" points="106,346.0 294,282.0 482,282.0 670,250.0 858,260.7"/>
+  <circle class="point" cx="106" cy="346.0" r="5.5" fill="#287A62" stroke="#287A62"><title>GPT-6 Sol, low: 0.0%</title></circle>
+  <circle class="point" cx="294" cy="282.0" r="5.5" fill="#287A62" stroke="#287A62"><title>GPT-6 Sol, medium: 20.0%</title></circle>
+  <circle class="point" cx="482" cy="282.0" r="5.5" fill="#287A62" stroke="#287A62"><title>GPT-6 Sol, high: 20.0%</title></circle>
+  <circle class="point" cx="670" cy="250.0" r="5.5" fill="#287A62" stroke="#287A62"><title>GPT-6 Sol, xhigh: 30.0%</title></circle>
+  <circle class="point" cx="858" cy="260.7" r="5.5" fill="#287A62" stroke="#287A62"><title>GPT-6 Sol, max: 26.7%</title></circle>
+  <text class="peak" x="670" y="77.6" text-anchor="middle">78.6%</text>
+</svg>
