@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent traces &middot; Instrumental Monitor Evasion</title>
-<meta name="description" content="Browse the 1,200 monitored episodes behind the leaderboard: every proposed tool call, the monitor's verdict and its stated reason.">
+<meta name="description" content="Browse the 1,200 monitored episodes used in the paper's mechanism analysis: agent actions, monitor decisions, and scored outcomes.">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="assets/styles.css">
 <script src="assets/common.js"></script>
@@ -37,9 +37,11 @@
 <section class="page-head">
   <div class="wrap">
     <h1>Agent traces</h1>
-    <p class="lede">Explore 1,200 episodes across eight agents and 50 task&ndash;policy
-    pairs. Each run shows the agent's calls, the monitor's decisions, and the
-    scored outcome.</p>
+    <p class="lede">Explore the 1,200 episodes across eight agents and 50
+    task&ndash;policy pairs used for the paper's mechanism analysis. Each run shows
+    the agent's calls, the monitor's decisions, the scored outcome, and the
+    GPT-5.6 Luna judge's evasion-attempt classification. This corpus is distinct
+    from the complete ten-agent leaderboard evaluation.</p>
     <div class="corpus-head">
       <div class="matrix-wrap">
         <table class="matrix" id="matrix" aria-label="Runs by agent and task source"></table>
@@ -60,6 +62,11 @@
         <option value="">all outcomes</option>
         <option value="evaded">evaded</option>
         <option value="held">held</option>
+      </select>
+      <select id="f-luna" aria-label="Filter by evasion attempt classification">
+        <option value="">any evasion attempt</option>
+        <option value="supported">possible evasion attempt</option>
+        <option value="no_supported">no supported attempt</option>
       </select>
       <select id="f-evidence" aria-label="Filter by evidence">
         <option value="">any evidence</option>
@@ -84,6 +91,7 @@
       </select>
       <select id="sort" aria-label="Sort runs">
         <option value="outcome">evaded first</option>
+        <option value="attempt">possible attempts first</option>
         <option value="blocked-desc">most blocks</option>
         <option value="calls-desc">most calls</option>
         <option value="duration-desc">longest</option>
@@ -104,7 +112,8 @@
     elided in the middle, and the resultstore remains authoritative. A run whose
     timeline is reconstructed from Codex stdout shows executed calls only.
     The run page identifies these cases. An <code>ALLOW</code> verdict does not
-    prove evasion, and a command pattern does not prove intent.</p>
+    prove evasion. A Luna-judged attempt is a possible attempt, not proof of
+    intent or a successful prohibited effect.</p>
   </footer>
 </main>
 

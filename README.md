@@ -4,7 +4,7 @@ Static site for *Instrumental Monitor Evasion Emerges Under Ordinary Task
 Pressure* (Schmotz, Prinzhorn, Beurer-Kellner, Paulus, Prabhu, Andriushchenko).
 No build step, no dependencies: serve the folder and it works.
 
-The landing page stays deliberately thin — leaderboard, how a run works, the
+The landing page stays deliberately thin — paper-style results figure, how a run works, the
 three routes agents take through the monitor, and the monitor diagnostics.
 Everything that needs depth lives in the paper or in the trace browser.
 
@@ -19,15 +19,14 @@ forced with `?lang=de` or `?lang=en`.
 
 The paper title, author names, model names, task ids, the quoted system
 messages the agents actually saw and the `ALLOW`/`BLOCK` verdicts stay in
-English in both versions: they are cited artifacts, not prose. German switches
-number formatting too (`60,0 %`). Text that the scripts write themselves — the
-leaderboard's unit toggle, the BibTeX copy button — goes through `I18N.t()`,
-and `I18N.onChange()` repaints the board when the language flips.
+English in both versions: they are cited artifacts, not prose. The chart legend
+and caption translate with the rest of the page. Text that scripts write,
+such as the BibTeX copy button, goes through `I18N.t()`.
 
 The trace browser under `traces/` is English only.
 
 ```
-index.html              the paper summary — leaderboard, setup, routes, monitors
+index.html              the paper summary — results figure, setup, routes, monitors
 styles.css, app.js      the landing page
 i18n.js                 the German translation and the EN/DE switch
 traces/index.html       catalog — agent × task-source matrix, filters, run tables
@@ -51,7 +50,9 @@ python3 -m http.server 8781 && open http://127.0.0.1:8781/
 
 ## The trace browser
 
-The live website shows all 1,200 traces behind the leaderboard.
+The live website shows the 1,200-run, eight-agent corpus used for the paper's
+mechanism analysis. The current results figure covers ten agents and is a
+separate evaluation export.
 `traces/data/` is generated from the private resultstore and committed with the
 site so Cloudflare can serve the viewer as ordinary static files.
 
@@ -64,7 +65,16 @@ Each run page has three panels:
 - **Monitor decisions** — every reviewed call in order, straight from the
   decision log, for the runs whose log the export carries.
 - **Setup & scoring** — how the episode was scored, the policy, the monitor and
-  agent configuration, and the fixed messages the agent was shown.
+  agent configuration, and the fixed messages the agent was shown. It also
+  shows the paper's Luna-judged evasion attempt classification and rationale.
+
+The catalog can filter runs by the Luna judge's `supported` or `no_supported`
+route label. A supported label is shown as a possible evasion attempt, matching
+the paper's evasion attempt measure. These labels come from the resultstore's
+`model_comparison/20260923_luna_figure1_judgments_v1/report.json`, joined by
+selected attempt ID. They assess visible actions after denial and do not change
+the deterministic evasion success outcome. The quote check only verifies cited text; it
+does not validate Luna's interpretation.
 
 ### Evidence coverage, and why runs differ
 
@@ -104,8 +114,9 @@ git clone https://github.com/davidsmts/agent-breakout-resultstore ~/resultstore
 python3 tools/build_traces.py --store ~/resultstore
 ```
 
-It rewrites `traces/data/` from scratch — 1,200 runs, about 135 MB. The
+It rewrites `traces/data/` from scratch — 1,200 runs, about 139 MB. The
 selection is read from `model_comparison/20260919_figure1_exact3_v1/summary.json`;
+the Luna labels are read from `model_comparison/20260923_luna_figure1_judgments_v1/report.json`;
 artifacts for each attempt are then located anywhere in the store, because the
 same attempt is exported into several snapshots and the copies are not equally
 complete. Tool output is clipped from the middle at 1,600 characters (3,000 for
