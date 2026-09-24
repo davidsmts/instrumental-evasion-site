@@ -1,0 +1,2 @@
+# The deploy uploads this repository as static assets. Exclude Git metadata.
+**/.git
