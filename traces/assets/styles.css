@@ -887,6 +887,68 @@ body { padding-bottom: 60px; }
 .notice-title { font-weight: 600; font-size: 12px; }
 .notice-detail { color: var(--muted); margin-top: 2px; line-height: 1.5; }
 
+.denial-card {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 9px;
+}
+
+.denial-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  background: var(--accent-faint);
+  border-bottom: 1px solid var(--accent-soft);
+}
+.denial-card header > div { min-width: 0; }
+.denial-card header strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.denial-eyebrow {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.denial-card .tool-cmd {
+  border-bottom: 1px solid var(--line-soft);
+  max-height: 320px;
+}
+
+.denial-reason {
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.denial-reason span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--faint);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.denial-card footer {
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
 /* ---- monitor decisions ---- */
 
 .section-intro { margin-bottom: 14px; font-size: 13.5px; max-width: 78ch; }

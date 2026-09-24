@@ -4,6 +4,9 @@ paper.pdf
 # Python bytecode from the trace build script.
 __pycache__/
 
-# Generated from the private resultstore; not published yet.
-# Rebuild with: python3 tools/build_traces.py --store <resultstore>
+# macOS folder metadata.
+.DS_Store
+
+# Complete trace corpus generated from the private resultstore. The website
+# ships only the deliberately selected files under traces/public-data/.
 traces/data/

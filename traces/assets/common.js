@@ -22,6 +22,8 @@
 })();
 
 var IME = (function () {
+  // Generated locally or injected into the Pages artifact at deployment time.
+  // The corpus itself is excluded from the source repository.
   var DATA_BASE = './data/';
   var pending = {};
 

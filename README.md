@@ -33,7 +33,7 @@ i18n.js                 the German translation and the EN/DE switch
 traces/index.html       catalog — agent × task-source matrix, filters, run tables
 traces/run.html         one run: event timeline, monitor decisions, setup & scoring
 traces/assets/          styles.css, common.js, catalog.js, run.js
-traces/data/            index.js + one <attempt_id>.js per run (generated, git-ignored)
+traces/data/            complete generated corpus (git-ignored, added at deploy time)
 tools/build_traces.py   turns the resultstore into traces/data/
 paper.pdf               the current draft (git-ignored while under review)
 ```
@@ -51,14 +51,15 @@ python3 -m http.server 8781 && open http://127.0.0.1:8781/
 
 ## The trace browser
 
-**The run data is not in this repository.** `traces/data/` is generated from a
-private resultstore (see below) and git-ignored; without it the catalog shows
-its "could not load the run index" state. Generate it before serving the site.
+The live website shows all 1,200 traces behind the leaderboard. The corpus is
+not committed to this repository: `traces/data/` is generated from the private
+resultstore and remains git-ignored. In production, a narrowly routed
+Cloudflare Pages Function reads the files from a private R2 bucket, so cloning
+the source repository does not download the trace corpus.
 
-`traces/` covers the **Figure-1 exact-three selection**: eight agents × 50
-task–policy pairs × exactly three audit-valid runs — the same 1,200 attempts
-the leaderboard is computed from, so every leaderboard row links into the runs
-behind its number.
+A visitor can still download anything the public viewer serves. This setup
+separates the website payload from the Git repository; it is not access
+control for the live traces.
 
 Each run page has three panels:
 
@@ -124,15 +125,33 @@ recorded, including the synthetic contacts ToolSandbox ships.
 Payloads are deterministic, so re-running the build over an unchanged store
 rewrites the files byte-for-byte and git records no new objects.
 
-## Before publishing the corpus
+## Deferred plan: publish traces without putting them in GitHub
 
-The trace corpus is derived from a **private** resultstore and this repository
-is public, so `traces/data/` is git-ignored by default: committing it publishes
-1,200 transcripts, about 135 MB, and that is a deliberate decision rather than a
-side effect of running the build. The paper is under double-blind review; the
-build redacts author and host identity from the transcripts and `paper.pdf`
-stays git-ignored, but nothing here decides for you whether the transcripts
-themselves should be public.
+**Status:** paused. No Cloudflare setup is required until we decide to publish
+the full trace browser.
 
-To publish them, drop the `traces/data/` line from `.gitignore` and commit the
-directory.
+**Goal:** show all 1,200 traces on the public website while keeping the 135 MB
+corpus out of normal GitHub clones.
+
+Already prepared:
+
+- `traces/data/` contains the full local corpus and is git-ignored.
+- The viewer requests `/traces/data/index.js` and individual run files.
+- `functions/traces/data/[[path]].js` can serve those requests from Cloudflare
+  R2 through a binding named `TRACE_DATA`.
+- `_routes.json` limits the Function to trace-data requests.
+
+When there is time, finish the setup in this order:
+
+1. Create a private Cloudflare R2 bucket for the trace files.
+2. Create an R2 API token limited to that bucket. Do not commit or share it.
+3. Bulk-upload the contents of `traces/data/` through R2's S3-compatible API.
+   This can be delegated once the local machine has been authenticated.
+4. In the Cloudflare Pages project, bind the bucket as `TRACE_DATA`.
+5. Redeploy the site and verify the catalog, one ordinary run, and one run with
+   linked monitor denials.
+
+For later corpus updates, rebuild `traces/data/` and repeat only the bulk sync.
+The R2 bucket should remain private; the Pages Function is the public read
+path. Anything displayed by the public viewer can still be downloaded, but it
+will not be included in a clone of this repository.

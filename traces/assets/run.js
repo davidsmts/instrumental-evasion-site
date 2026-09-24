@@ -75,7 +75,21 @@
       escapeHtml(event.verdict) + '</span>';
   }
 
-  function body(event) {
+  function denialCard(link) {
+    var heading = link.callNumber
+      ? 'Tool call #' + link.callNumber
+      : 'Monitor review #' + (link.decision.i + 1);
+    return '<div class="denial-card"><header>' +
+      '<div><span class="denial-eyebrow">Proposed tool call</span>' +
+      '<strong>' + heading + ' · ' + escapeHtml(link.name || 'tool') + '</strong></div>' +
+      '<span class="tag block">BLOCK</span></header>' +
+      '<pre class="tool-cmd">' + escapeHtml(link.input || '(input not recorded)') + '</pre>' +
+      '<div class="denial-reason"><span>Monitor reason</span>' +
+      escapeHtml(link.reason || 'No reason was recorded.') + '</div>' +
+      '<footer>The guardrail denied this proposal. The tool call did not run.</footer></div>';
+  }
+
+  function body(event, context) {
     switch (event.kind) {
       case 'session_start':
         var fields = [
@@ -141,12 +155,15 @@
 
       case 'notice':
         if (event.flavor === 'deny') {
+          var link = context && context.noticeLinks[event.i];
+          if (link) return denialCard(link);
           return '<div class="notice notice-deny">' +
-            '<div class="notice-title">Guardrail denial reminder</div>' +
+            '<div class="notice-title">Guardrail denial</div>' +
             '<div class="notice-detail">' +
             escapeHtml((DATA.setup || {}).refusal_context_message ||
               'The preceding tool call was denied by a runtime guardrail.') +
-            '</div></div>';
+            '</div><div class="notice-detail"><strong>The export does not ' +
+            'contain a reliable link to the proposed call.</strong></div></div>';
         }
         return '<div class="notice notice-' + escapeHtml(event.flavor || 'info') + '">' +
           '<div class="notice-title">' + escapeHtml(event.title || '') + '</div>' +
@@ -168,25 +185,84 @@
   function renderTrace() {
     var callNumber = 0;
     var numbers = {};
+    var eventDecisionIds = {};
     DATA.events.forEach(function (event) {
       if (event.kind === 'tool_call') {
         callNumber += 1;
         numbers[event.i] = callNumber;
       }
+      if (event.decision_i !== undefined) eventDecisionIds[event.decision_i] = true;
     });
 
-    var rows = DATA.events.filter(visible).map(function (event) {
-      var html = body(event);
+    /* A denial message and its proposed call can live in different artifacts.
+       First prefer the blocked call immediately before the notice. If that is
+       absent, use the closest unmatched blocked decision in time. */
+    var noticeLinks = {};
+    var mergedCalls = {};
+    var usedDecisions = {};
+    DATA.events.forEach(function (event, index) {
+      if (event.kind !== 'notice' || event.flavor !== 'deny') return;
+
+      for (var prior = index - 1; prior >= 0 && prior >= index - 4; prior--) {
+        var candidate = DATA.events[prior];
+        if (candidate.kind === 'tool_call') {
+          if (candidate.blocked) {
+            var matchedDecision = DATA.decisions[candidate.decision_i];
+            noticeLinks[event.i] = {
+              callNumber: numbers[candidate.i],
+              name: candidate.name,
+              input: candidate.input,
+              reason: candidate.reason,
+              decision: matchedDecision || { i: candidate.decision_i || 0 }
+            };
+            mergedCalls[candidate.i] = true;
+            if (candidate.decision_i !== undefined) usedDecisions[candidate.decision_i] = true;
+          }
+          break;
+        }
+      }
+
+      if (noticeLinks[event.i] || !event.ts) return;
+      var noticeTime = Date.parse(event.ts);
+      var best = null;
+      var bestDistance = Infinity;
+      DATA.decisions.forEach(function (decision) {
+        if (!decision.blocked || usedDecisions[decision.i] || eventDecisionIds[decision.i]) return;
+        var decisionTime = Number(decision.ts) * 1000;
+        var distance = Math.abs(noticeTime - decisionTime);
+        if (distance < bestDistance) { best = decision; bestDistance = distance; }
+      });
+      if (best && bestDistance <= 15000) {
+        usedDecisions[best.i] = true;
+        noticeLinks[event.i] = {
+          callNumber: null,
+          name: best.tool,
+          input: best.input,
+          reason: best.reason,
+          decision: best
+        };
+      }
+    });
+
+    var context = { noticeLinks: noticeLinks };
+    var rowItems = DATA.events.filter(visible).map(function (event) {
+      if (mergedCalls[event.i]) return '';
+      if (event.kind === 'tool_result' && event.denied) {
+        var previous = DATA.events[event.i - 1];
+        if (previous && noticeLinks[previous.i]) return '';
+      }
+      var html = body(event, context);
       if (!html) return '';
       return '<div class="row row-' + event.kind + '">' +
         gutter(event, numbers[event.i]) +
         '<div class="row-body">' + html + '</div></div>';
-    }).join('');
+    });
+    var rows = rowItems.join('');
 
     el.trace.innerHTML = rows ||
       '<p class="muted">This run has no readable stream artifact.</p>';
 
-    var shown = DATA.events.filter(visible).length;
+    var shown = rowItems.filter(Boolean).length;
     el.count.textContent = callNumber + ' tool call' + (callNumber === 1 ? '' : 's') +
       ' · ' + shown + ' of ' + DATA.events.length + ' events shown';
   }
