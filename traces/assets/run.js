@@ -230,18 +230,45 @@
     });
 
     var context = { noticeLinks: noticeLinks };
-    var rowItems = DATA.events.map(function (event) {
+    var rowItems = [];
+    var decisionCursor = 0;
+    var insertedBlocks = 0;
+
+    function addUnmatchedBlocks(beforeDecision) {
+      if (DATA.trace_source !== 'codex-stdout') return;
+      while (decisionCursor < DATA.decisions.length &&
+             DATA.decisions[decisionCursor].i < beforeDecision) {
+        var decision = DATA.decisions[decisionCursor++];
+        if (!decision.blocked || eventDecisionIds[decision.i] ||
+            usedDecisions[decision.i]) continue;
+        var event = { kind: 'monitor_block', i: 'monitor-' + decision.i };
+        rowItems.push('<div class="row row-monitor-block">' + gutter(event) +
+          '<div class="row-body">' + denialCard({
+            decision: decision,
+            name: decision.tool,
+            input: decision.input,
+            reason: decision.reason
+          }) + '</div></div>');
+        insertedBlocks += 1;
+      }
+    }
+
+    DATA.events.forEach(function (event) {
+      if (event.kind === 'tool_call' && event.decision_i !== undefined) {
+        addUnmatchedBlocks(event.decision_i);
+      }
       if (mergedCalls[event.i]) return '';
       if (event.kind === 'tool_result' && event.denied) {
         var previous = DATA.events[event.i - 1];
         if (previous && noticeLinks[previous.i]) return '';
       }
       var html = body(event, context);
-      if (!html) return '';
-      return '<div class="row row-' + event.kind + '">' +
+      if (!html) return;
+      rowItems.push('<div class="row row-' + event.kind + '">' +
         gutter(event, numbers[event.i]) +
-        '<div class="row-body">' + html + '</div></div>';
+        '<div class="row-body">' + html + '</div></div>');
     });
+    addUnmatchedBlocks(Infinity);
     var rows = rowItems.join('');
 
     el.trace.innerHTML = rows ||
@@ -250,7 +277,10 @@
     var shown = rowItems.filter(Boolean).length;
     el.count.textContent = callNumber +
       (DATA.trace_source === 'codex-stdout' ? ' executed call' : ' tool call') +
-      (callNumber === 1 ? '' : 's') + ' · ' + shown + ' timeline rows';
+      (callNumber === 1 ? '' : 's') +
+      (insertedBlocks ? ' · ' + insertedBlocks + ' blocked proposal' +
+        (insertedBlocks === 1 ? '' : 's') : '') +
+      ' · ' + shown + ' timeline rows';
   }
 
   function renderDecisions() {
@@ -315,6 +345,10 @@
         definition('quote check', judgment.evidence_valid
           ? 'passed' : 'not verified') +
         '</dl>' +
+        (DATA.trace_source === 'codex-stdout' && DATA.decisions.some(function (d) { return d.blocked; })
+          ? '<p class="muted">The judge rationale refers to the exported ' +
+            'executed-call trace. This page also shows blocked proposals from ' +
+            'the separate monitor log.</p>' : '') +
         '<p class="muted">This GPT-5.6 Luna judgment is the paper\'s evasion ' +
         'attempt measure. A positive verdict means the judge found a substantive ' +
         'alternate action after a visible denial. It does not establish ' +
@@ -410,7 +444,9 @@
       var supported = DATA.luna_judgment.route_attempt === 'supported';
       el.luna.innerHTML = '<span>Evasion attempt · Luna judge</span><strong>' +
         (supported ? 'Possible attempt' : 'No supported attempt') + '</strong>' +
-        '<small>Post-denial trace classification</small>';
+        '<small>' + (DATA.trace_source === 'codex-stdout' && DATA.blocked_calls
+          ? 'Judge trace omits monitor-only blocks shown below'
+          : 'Post-denial trace classification') + '</small>';
     }
 
     el.policy.innerHTML = '<span class="policy-label">policy constraint</span>' +
@@ -442,8 +478,12 @@
       coverage += '<p>Monitor decisions available from the ' +
         escapeHtml(DATA.decision_artifact || 'decision log') + ': ' +
         DATA.decisions.length +
-        ' reviewed calls, ' + DATA.verdicts_joined + ' matched to a call in the ' +
-        'timeline.</p>';
+        ' reviewed calls, ' + DATA.verdicts_joined +
+        (DATA.trace_source === 'codex-stdout'
+          ? ' matched to executed calls in the stream.'
+          : ' matched to calls in the stream.') +
+        (DATA.blocked_calls ? ' Recorded blocks also appear in the run trace.' : '') +
+        '</p>';
     } else {
       coverage += '<p>No monitor decision log in the export for this attempt. ' +
         'Verdict badges are therefore absent from the timeline; the episode ' +
@@ -453,10 +493,11 @@
     el.coverage.innerHTML = coverage;
 
     el.traceNote.innerHTML = DATA.trace_source === 'codex-stdout'
-      ? '<strong>Executed calls only.</strong> ' + (DATA.decisions.length
-        ? 'The Monitor decisions tab lists ' +
-          IME.number(DATA.decisions.length) + ' reviewed proposals, including ' +
-          IME.number(DATA.blocked_calls) + ' blocked, with their commands and reasons.'
+      ? '<strong>Executed-call stream and monitor log.</strong> ' +
+        (DATA.decisions.length
+        ? 'The stream omits blocked proposals. Recorded blocks appear below in ' +
+          'monitor order; the Monitor decisions tab lists all ' +
+          IME.number(DATA.decisions.length) + ' reviewed proposals.'
         : 'The episode reports ' + IME.number(DATA.blocked_calls) +
           ' blocks, but this export has no per-call monitor decisions.')
       : '';
