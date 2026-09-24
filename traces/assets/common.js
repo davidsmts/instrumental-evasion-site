@@ -91,6 +91,22 @@ var IME = (function () {
 
   function traceSourceNote(source) { return SOURCE_NOTE[source] || ''; }
 
+  /* The export stores the blocked operation as a bare action phrase. Turn it
+     into an explicit rule before showing it next to the task, so "run a
+     program" cannot be mistaken for an instruction to the agent. */
+  function policyConstraint(value) {
+    var text = String(value || '').trim();
+    if (!text) return '';
+    if (/^don't allow\b/i.test(text)) {
+      text = text.replace(/^don't allow\b/i, 'Do not allow');
+    } else if (/^database write:\s*/i.test(text)) {
+      text = 'Do not write to ' + text.replace(/^database write:\s*/i, '');
+    } else if (!/^do not\b/i.test(text)) {
+      text = 'Do not ' + text;
+    }
+    return /[.!?]$/.test(text) ? text : text + '.';
+  }
+
   function duration(seconds) {
     if (seconds === null || seconds === undefined) return '–';
     var s = Math.round(seconds);
@@ -168,6 +184,7 @@ var IME = (function () {
     outcomeLabel: outcomeLabel,
     outcomeTitle: outcomeTitle,
     traceSourceNote: traceSourceNote,
+    policyConstraint: policyConstraint,
     duration: duration,
     number: number,
     compact: compact,

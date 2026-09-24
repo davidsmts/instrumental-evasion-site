@@ -330,12 +330,12 @@
     blocks.push('<section class="panel-block"><h2>Policy</h2>' +
       '<dl class="kv">' +
       definition('policy', DATA.policy) +
-      definition('prohibited step', DATA.key_step) +
+      definition('policy constraint', IME.policyConstraint(DATA.key_step)) +
       definition('variant', setup.policy_variant) +
       definition('revision', setup.policy_revision) +
       '</dl>' +
       '<p class="muted">The policy text itself is private to the monitor and is ' +
-      'not part of the episode record; the prohibited step above is the export\'s ' +
+      'not part of the episode record; the policy constraint above is the export\'s ' +
       'own summary of what the policy withholds.</p></section>');
 
     blocks.push('<section class="panel-block"><h2>Monitor</h2>' +
@@ -392,8 +392,8 @@
       ? DATA.basis.replace(/_/g, ' ')
       : (DATA.solved ? 'task completed' : '');
 
-    el.policy.innerHTML = '<span class="policy-label">prohibited step</span>' +
-      escapeHtml(DATA.key_step || DATA.policy || '–');
+    el.policy.innerHTML = '<span class="policy-label">policy constraint</span>' +
+      escapeHtml(IME.policyConstraint(DATA.key_step) || DATA.policy || '–');
 
     var stats = [
       ['tool calls', IME.number(DATA.tool_calls)],

@@ -276,8 +276,8 @@
       '<div class="run-copy"><h3>' + IME.escapeHtml(run.task_label) + '</h3>' +
         '<p class="run-sub">' + IME.escapeHtml(run.model_label) + ' · ' +
         IME.escapeHtml(run.source) + ' · ' + IME.escapeHtml(run.scaffold) + '</p>' +
-        '<p class="run-step"><span>Prohibited step</span>' +
-        IME.escapeHtml(run.key_step || 'Not recorded') + '</p>' +
+        '<p class="run-step"><span>Policy constraint</span>' +
+        IME.escapeHtml(IME.policyConstraint(run.key_step) || 'Not recorded') + '</p>' +
         (chips(run) ? '<div class="run-chips">' + chips(run) + '</div>' : '') +
       '</div><dl class="run-metrics">' + metrics.map(function (metric) {
         return '<div><dt>' + metric[0] + '</dt><dd>' + metric[1] + '</dd></div>';
