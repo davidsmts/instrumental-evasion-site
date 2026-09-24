@@ -1,25 +1,4 @@
-/* Shared by the catalog and the run page: theme, data loading, formatting. */
-
-(function () {
-  var stored;
-  try { stored = localStorage.getItem('theme'); } catch (e) { /* private mode */ }
-  if (!stored) {
-    stored = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', stored);
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var button = document.getElementById('theme-toggle');
-    if (!button) return;
-    button.addEventListener('click', function () {
-      var next = document.documentElement.getAttribute('data-theme') === 'dark'
-        ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch (e) { /* ignore */ }
-    });
-  });
-})();
+/* Shared by the catalog and the run page: data loading and formatting. */
 
 var IME = (function () {
   // Generated locally or injected into the Pages artifact at deployment time.

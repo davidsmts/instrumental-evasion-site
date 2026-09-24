@@ -5,18 +5,6 @@
 
   var copyBtn = document.getElementById('copyCite');
 
-  /* ---------- theme ---------- */
-
-  var themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', function () {
-      var next = document.documentElement.getAttribute('data-theme') === 'dark'
-        ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch (e) { /* private mode */ }
-    });
-  }
-
   I18N.onChange(function () {
     if (copyBtn) copyBtn.textContent = I18N.t('cite.copy');
   });

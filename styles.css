@@ -29,31 +29,6 @@
   --measure: 1120px;
 }
 
-/* Light is the default. Dark is opt-in: <html data-theme="dark">. */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #131215;
-  --surface: #1b1a1e;
-  --surface-2: #201f24;
-  --text: #eceaf0;
-  --muted: #9b98a3;
-  --faint: #7d7a86;
-  --line: #2e2c33;
-  --line-soft: #26242a;
-  --accent: #e1899a;
-  --accent-soft: #8c4a56;
-  --accent-faint: #2c1f24;
-  --chart-single: #2c1f24;
-  --chart-success: #874654;
-  --chart-success-ink: #e89aaa;
-  --chart-attempt: #1c5467;
-  --chart-attempt-ink: #85d3e8;
-  --ok: #7dbd94;
-  --ok-bg: rgba(80, 140, 100, 0.18);
-  --warn: #d3a55e;
-  --warn-bg: rgba(190, 140, 60, 0.16);
-}
-
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
@@ -165,7 +140,7 @@ code {
   gap: 10px;
 }
 
-/* EN/DE switch: a segmented pair, sized to match the theme button. */
+/* EN/DE switch. */
 .lang-toggle {
   display: inline-flex;
   flex: none;
@@ -194,24 +169,6 @@ code {
   :root[data-lang="de"] .mark-text { display: none; }
 }
 
-.theme-toggle {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface);
-  color: var(--muted);
-  cursor: pointer;
-}
-.theme-toggle:hover { color: var(--text); border-color: var(--accent-soft); }
-.theme-icon { width: 15px; height: 15px; }
-:root[data-theme="dark"] .theme-icon-sun { display: none; }
-:root:not([data-theme="dark"]) .theme-icon-moon { display: none; }
-
 .nav-cta {
   flex: none;
   font-size: 13.5px;
@@ -224,7 +181,6 @@ code {
 }
 .nav-cta:hover { opacity: 0.88; }
 
-:root[data-theme="dark"] .nav-cta { color: #17161a; }
 
 /* ========================= hero ========================= */
 
@@ -258,7 +214,6 @@ header#top {
   letter-spacing: 0.06em;
 }
 
-:root[data-theme="dark"] .badge-tag { color: #17161a; }
 
 h1 {
   font-family: var(--serif);
@@ -309,7 +264,6 @@ h1 {
 }
 .cta-primary:hover { opacity: 0.88; }
 
-:root[data-theme="dark"] .cta-primary { color: #17161a !important; }
 
 .cta-secondary {
   background: var(--surface);
@@ -1133,7 +1087,6 @@ body.js .panel.is-active { display: block; }
 .tag.raw { background: var(--surface-2); color: var(--muted); }
 .tag.verifier, .tag.solved { background: var(--accent); color: var(--surface); }
 
-:root[data-theme="dark"] .tag.verifier, :root[data-theme="dark"] .tag.solved { color: #17161a; }
 
 .trace-card .caption {
   margin: 0;

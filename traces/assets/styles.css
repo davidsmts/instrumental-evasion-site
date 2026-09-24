@@ -73,23 +73,6 @@ body { padding-bottom: 60px; }
   max-width: 40ch;
 }
 
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface);
-  color: var(--muted);
-  cursor: pointer;
-}
-.theme-toggle:hover { color: var(--text); border-color: var(--accent-soft); }
-.theme-icon { width: 15px; height: 15px; }
-:root[data-theme="dark"] .theme-icon-sun { display: none; }
-:root:not([data-theme="dark"]) .theme-icon-moon { display: none; }
-
 /* ============================ hero ============================ */
 
 .page-head {
@@ -639,22 +622,6 @@ body { padding-bottom: 60px; }
   font-size: 12px;
   margin-bottom: 12px;
 }
-
-.seg {
-  display: inline-flex;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.seg button {
-  border: 0;
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 12px;
-  padding: 5px 11px;
-  cursor: pointer;
-}
-.seg button.active { background: var(--accent-faint); color: var(--accent); }
 
 .toggle-label {
   display: inline-flex;

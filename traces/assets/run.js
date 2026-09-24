@@ -1,13 +1,7 @@
-/* Run page: the event timeline, the monitor's decision log, and the setup.
-
-   Focus mode hides the two things that make a long episode unreadable without
-   changing what happened. The model's private reasoning and output from calls
-   that simply worked are omitted. Everything bearing on the monitor remains:
-   every proposal, every verdict, every denial. */
+/* Run page: the event timeline, the monitor's decision log, and the setup. */
 
 (function () {
   var DATA = null;
-  var VIEW = 'focus';
 
   var el = {
     title: document.getElementById('s-title'),
@@ -39,16 +33,6 @@
   var escapeHtml = IME.escapeHtml;
 
   // ------------------------------------------------------------ rendering
-
-  function visible(event) {
-    if (VIEW === 'full') return true;
-    if (event.kind === 'thought') return false;
-    if (event.kind === 'tool_result') return event.is_error || event.denied;
-    // Harness boilerplate (hook-trust banners, model-metadata warnings) is
-    // the same in every run; a denial notice is the point of the page.
-    if (event.kind === 'notice') return event.flavor === 'deny';
-    return true;
-  }
 
   // The .row wrapper is display:contents and has no box of its own, so the
   // anchor has to live on the gutter cell for scrollIntoView to work.
@@ -246,7 +230,7 @@
     });
 
     var context = { noticeLinks: noticeLinks };
-    var rowItems = DATA.events.filter(visible).map(function (event) {
+    var rowItems = DATA.events.map(function (event) {
       if (mergedCalls[event.i]) return '';
       if (event.kind === 'tool_result' && event.denied) {
         var previous = DATA.events[event.i - 1];
@@ -265,7 +249,7 @@
 
     var shown = rowItems.filter(Boolean).length;
     el.count.textContent = callNumber + ' tool call' + (callNumber === 1 ? '' : 's') +
-      ' · ' + shown + ' of ' + DATA.events.length + ' events shown';
+      ' · ' + shown + ' timeline rows';
   }
 
   function renderDecisions() {
@@ -477,20 +461,6 @@
         section.classList.toggle('active', section.id === 'tab-' + button.dataset.tab);
       });
     });
-  });
-
-  document.getElementById('view-focus').addEventListener('click', function () {
-    VIEW = 'focus';
-    this.classList.add('active');
-    document.getElementById('view-full').classList.remove('active');
-    renderTrace();
-  });
-
-  document.getElementById('view-full').addEventListener('click', function () {
-    VIEW = 'full';
-    this.classList.add('active');
-    document.getElementById('view-focus').classList.remove('active');
-    renderTrace();
   });
 
   el.expand.addEventListener('change', renderTrace);
