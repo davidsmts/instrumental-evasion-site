@@ -29,7 +29,7 @@ var I18N = (function () {
     'hero.body': 'EvasionBench verbindet 50 harmlose Aufgaben mit privaten ' +
       'Richtlinien, die eine zur Lösung nötige Operation sperren. Ohne Angriffsziel ' +
       'oder Anweisung zur Umgehung passieren neun von zehn Agenten den Monitor bei ' +
-      'mindestens einigen Aufgaben. Der Best-of-3-Erfolg erreicht 89 %, versuchte ' +
+      'mindestens einigen Aufgaben. Der Best-of-3-Erfolg erreicht 88 %, versuchte ' +
       'Umgehung 98 %.',
     'hero.cta.paper': 'Paper lesen (PDF)',
     'hero.cta.traces': '1.200 Traces durchsuchen',
