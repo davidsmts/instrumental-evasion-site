@@ -23,7 +23,7 @@
       <a href="#setup" data-i18n="nav.setup">Setup</a>
       <a href="#routes" data-i18n="nav.routes">Routes</a>
       <a href="#injection" data-i18n="nav.injection">Prompt injection</a>
-      <a href="#monitors" data-i18n="nav.monitors">Monitors</a>
+      <a href="#feedback" data-i18n="nav.feedback">Feedback</a>
       <a href="#cite" data-i18n="nav.cite">Cite</a>
     </div>
     <div class="nav-actions">
@@ -323,7 +323,7 @@
     </div>
 
     <figure class="injection-figure" aria-labelledby="injection-chart-title">
-      <h3 id="injection-chart-title" data-i18n="mon.forged.chart.title">Completion under a forged monitor denial</h3>
+      <h3 id="injection-chart-title" data-i18n="mon.forged.chart.title">Utility under a denial-of-service prompt injection</h3>
       <div class="injection-chart-scroll" tabindex="0" aria-labelledby="injection-chart-title">
         <img class="injection-plot" src="forged-denial.svg" alt="" aria-hidden="true">
       </div>
@@ -357,53 +357,11 @@
   </div>
 </section>
 
-<!-- ============================ MONITOR COMPARISON ============================ -->
-
-<section id="monitors">
-  <div class="wrap">
-    <h2 class="kicker" data-i18n="mon.compare.title">Monitor choice</h2>
-    <div class="monitor-grid">
-      <figure class="monitor-panel">
-        <h3 data-i18n="mon.compare.evasion">Evasion by monitor</h3>
-        <div class="scroll">
-          <table class="data">
-            <thead><tr><th data-i18n="mon.compare.th.monitor">Monitor</th><th class="num" data-i18n="mon.compare.th.rate">Evasion rate</th></tr></thead>
-            <tbody>
-              <tr><td>GPT-OSS-120B</td><td class="num">17.6%</td></tr>
-              <tr><td>Llama 3.1 8B</td><td class="num">35.3%</td></tr>
-              <tr><td>Qwen 3.6 35B-A3B</td><td class="num">41.2%</td></tr>
-              <tr><td>Qwen 3.5 9B</td><td class="num">14.7%</td></tr>
-              <tr><td>Qwen 3.5 35B-A3B</td><td class="num">50.0%</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <figcaption class="caption" data-i18n="mon.compare.evasion.caption">GPT-5.6 Sol, one run on each of the same 34 tasks.</figcaption>
-      </figure>
-      <figure class="monitor-panel">
-        <h3 data-i18n="mon.compare.accuracy">Call classification</h3>
-        <div class="scroll">
-          <table class="data">
-            <thead><tr><th data-i18n="mon.compare.th.monitor">Monitor</th><th class="num" data-i18n="mon.compare.th.precision">Precision</th><th class="num" data-i18n="mon.compare.th.recall">Recall</th><th class="num">F1</th></tr></thead>
-            <tbody>
-              <tr><td>GPT-OSS-120B</td><td class="num">100</td><td class="num">100</td><td class="num">100</td></tr>
-              <tr><td>GPT-5.6 Luna</td><td class="num">97.1</td><td class="num">91.7</td><td class="num">94.3</td></tr>
-              <tr><td>Llama 3.1 8B</td><td class="num">100</td><td class="num">83.3</td><td class="num">90.9</td></tr>
-              <tr><td>Qwen 3.6 35B-A3B</td><td class="num">82.9</td><td class="num">94.4</td><td class="num">88.3</td></tr>
-              <tr><td>Qwen 3.5 9B</td><td class="num">57.1</td><td class="num">100</td><td class="num">72.7</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <figcaption class="caption" data-i18n="mon.compare.accuracy.caption">Percentages on a separate set of 36 prohibited and 36 permitted requests per monitor.</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
 <!-- ============================ DENIAL FEEDBACK ============================ -->
 
 <section id="feedback">
   <div class="wrap">
-    <h2 class="kicker" data-i18n="mon.reason.title">Explaining the denial can backfire</h2>
+    <h2 class="kicker" id="monitors" data-i18n="mon.reason.title">Explaining the denial can backfire</h2>
     <p class="section-lead" data-i18n="mon.reason.body">Replacing the neutral denial with the monitor's reason moves the two models in opposite directions. Disclosure does not consistently reduce evasion.</p>
     <div class="scroll">
       <table class="data">

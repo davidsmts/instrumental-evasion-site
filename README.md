@@ -5,7 +5,7 @@ Pressure* (Schmotz, Prinzhorn, Beurer-Kellner, Paulus, Prabhu, Andriushchenko).
 No build step, no dependencies: serve the folder and it works.
 
 The landing page stays deliberately thin — paper-style results figure, how a run works, the
-three routes agents take through the monitor, and the monitor diagnostics.
+three routes agents take through the monitor, prompt injection, and denial feedback.
 Everything that needs depth lives in the paper or in the trace browser.
 
 ## Languages
@@ -26,7 +26,7 @@ such as the BibTeX copy button, goes through `I18N.t()`.
 The trace browser under `traces/` is English only.
 
 ```
-index.html              the paper summary — results figure, setup, routes, monitors
+index.html              the paper summary — results figure, setup, routes, injection, feedback
 styles.css, app.js      the landing page
 i18n.js                 the German translation and the EN/DE switch
 traces/index.html       catalog — agent × task-source matrix, filters, run tables

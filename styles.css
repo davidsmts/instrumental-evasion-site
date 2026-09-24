@@ -843,23 +843,6 @@ sup.fn {
 .injection-values .scroll { margin-top: 10px; }
 .injection-callout { margin-top: 20px; }
 
-/* Two monitor diagnostics from the paper's monitor comparison. */
-.monitor-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 34px;
-}
-.monitor-panel { min-width: 0; margin: 0; }
-.monitor-panel h3 {
-  font-size: 19px;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  margin: 0 0 12px;
-}
-.monitor-panel .caption { margin-top: 10px; }
-.monitor-panel td, .monitor-panel th { padding-right: 8px; }
-.monitor-panel td:last-child, .monitor-panel th:last-child { padding-right: 0; }
-
 /* ========================= run setup ========================= */
 
 .setup-copy { max-width: 78ch; }
@@ -1121,7 +1104,6 @@ footer {
 /* ========================= responsive ========================= */
 
 @media (max-width: 860px) {
-  .monitor-grid { grid-template-columns: 1fr; gap: 28px; }
   .injection-intro { grid-template-columns: 1fr; gap: 18px; }
   .injection-scroll-hint { display: block; }
   .nav-links { display: none; }
