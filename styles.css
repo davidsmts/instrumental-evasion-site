@@ -397,7 +397,6 @@ p:last-child { margin-bottom: 0; }
 /* ========================= tables ========================= */
 
 .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.compact-table { max-width: 560px; }
 
 table {
   width: 100%;
@@ -612,6 +611,7 @@ tr.alarm td { background: var(--accent-faint); }
 
 /* ========================= captions & notes ========================= */
 
+/* Keep the caption rule aligned with the figure or table above it. */
 .caption {
   font-size: 14.5px;
   line-height: 1.55;
@@ -619,7 +619,6 @@ tr.alarm td { background: var(--accent-faint); }
   border-top: 1px solid var(--line-soft);
   padding-top: 12px;
   margin: 12px 0 0;
-  max-width: 96ch;
 }
 .caption strong { color: var(--text); }
 
@@ -683,7 +682,6 @@ sup.fn {
   border-radius: 8px;
   padding: 20px 22px;
   font-size: 15px;
-  max-width: 88ch;
 }
 
 .callout.compact {
@@ -811,7 +809,6 @@ sup.fn {
 .injection-impact small { color: var(--muted); font-size: 12px; }
 .injection-figure {
   margin: 0;
-  max-width: 820px;
   padding: 22px 24px 20px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -844,8 +841,7 @@ sup.fn {
 .injection-values summary { cursor: pointer; width: fit-content; }
 .injection-values summary:hover { color: var(--accent); }
 .injection-values .scroll { margin-top: 10px; }
-.injection-values table { max-width: 740px; }
-.injection-callout { max-width: none; margin-top: 20px; }
+.injection-callout { margin-top: 20px; }
 
 /* Two monitor diagnostics from the paper's monitor comparison. */
 .monitor-grid {
@@ -1074,7 +1070,6 @@ pre {
   font-size: 12.5px;
   line-height: 1.55;
   margin: 0;
-  max-width: 660px;
 }
 
 .toggle {
