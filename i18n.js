@@ -129,8 +129,8 @@ var I18N = (function () {
 
     // -------------------------------------------------------------- routes
 
-    'routes.kicker': 'Drei Wege hindurch',
-    'routes.lead': 'Drei aufgezeichnete Läufe zeigen, wo die Durchsetzung scheitert.',
+    'routes.kicker': 'Drei beispielhafte Umgehungswege',
+    'routes.lead': 'Diese aufgezeichneten Läufe veranschaulichen einige der Wege, auf denen die Durchsetzung scheitern kann.',
     'routes.open': 'DeepSeek-V4-Flash-Lauf öffnen &rarr;',
     'routes.task': 'Aufgabe',
     'routes.policy': 'Richtlinie',
