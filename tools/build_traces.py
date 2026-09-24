@@ -27,13 +27,13 @@ Sources per run, in the order they are preferred:
  2. `stdout.txt` in Claude Code's stream-json form — tool_use blocks carry
     denied calls too, so this is equally complete for the Claude cohorts.
  3. `stdout.txt` in Codex's item-stream form — executed calls only. Blocked
-    proposals are missing from the timeline and are recovered from the
-    monitor decision log, which is rendered as its own panel.
+    proposals are missing from the timeline but appear in the monitor-decision
+    panel.
 
-`decisions.jsonl` (every proposed call, the ALLOW/BLOCK verdict and the
-monitor's reason) is carried separately whenever it exists, and joined onto
-the timeline by tool-use id where both sides have one. Runs without it say so
-rather than implying the monitor never spoke.
+Monitor decisions come from `samples[0].decisions` in `result.json[.gz]`.
+The separate `decisions.jsonl` is a fallback for older episode records. The
+embedded list is the selected episode's own record and reconciles with its
+tool-call and blocked-call totals.
 """
 
 from __future__ import annotations
@@ -634,12 +634,17 @@ def parse_codex_stdout(path: Path) -> list[dict]:
 # monitor decisions
 # --------------------------------------------------------------------------
 
-def load_decisions(attempt: Attempt) -> list[dict]:
-    path = attempt.get("decisions.jsonl")
-    if path is None:
-        return []
+def load_decisions(attempt: Attempt, sample: dict) -> tuple[list[dict], str]:
+    embedded = sample.get("decisions")
+    if isinstance(embedded, list):
+        records = embedded
+        artifact = "episode record"
+    else:
+        path = attempt.get("decisions.jsonl")
+        records = read_lines(path) if path is not None else []
+        artifact = "decision log" if path is not None else "none"
     decisions = []
-    for index, record in enumerate(read_lines(path)):
+    for index, record in enumerate(records):
         raw_input = record.get("tool_input") or {}
         if isinstance(raw_input, dict):
             shown = raw_input.get("command") or json.dumps(raw_input)
@@ -660,18 +665,23 @@ def load_decisions(attempt: Attempt) -> list[dict]:
             "latency_ms": record.get("classifier_latency_ms"),
             "parse_status": record.get("parse_status"),
         })
-    return decisions
+    return decisions, artifact
 
 
-def attach_verdicts(events: list[dict], decisions: list[dict]) -> int:
+def attach_verdicts(events: list[dict], decisions: list[dict],
+                    executed_only: bool = False) -> int:
     """Join verdicts onto the timeline, by tool-use id and then by command.
 
     Only calls that actually ran carry an id both sides agree on: a blocked
     proposal never becomes an execution, so it has no exec id in the session.
     Those are matched on the command text instead, earliest unused decision
     first, which keeps a retried command paired with the right verdict.
-    Anything still unmatched stays visible in the decisions panel.
+    Anything still unmatched stays visible in the decisions panel. A Codex
+    stdout call necessarily ran, so it can only receive an ALLOW verdict.
     """
+    has_decisions = bool(decisions)
+    if executed_only:
+        decisions = [d for d in decisions if not d["blocked"]]
     by_id = {d["tool_use_id"]: d for d in decisions if d.get("tool_use_id")}
     used = set()
     joined = 0
@@ -723,7 +733,7 @@ def attach_verdicts(events: list[dict], decisions: list[dict]) -> int:
     # no decision is that gap — not a failure to match. Flagged only for this
     # tool, because for any other call an unmatched proposal is more likely a
     # quoting difference between two artifacts than an unreviewed call.
-    if decisions:
+    if has_decisions:
         for event in calls:
             if event.get("name") == "write_stdin" and "verdict" not in event:
                 event["unreviewed"] = True
@@ -742,7 +752,7 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
     sample_meta = sample.get("metadata") or {}
     scoring = sample_meta.get("success_scoring") or {}
 
-    decisions = load_decisions(attempt)
+    decisions, decision_artifact = load_decisions(attempt, sample)
 
     rollouts = attempt.rollouts()
     scaffold = result.get("scaffold") or meta.get("agent") or ""
@@ -761,7 +771,8 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         events = []
         trace_source = "none"
 
-    joined = attach_verdicts(events, decisions)
+    joined = attach_verdicts(events, decisions,
+                             executed_only=trace_source == "codex-stdout")
     for index, event in enumerate(events):
         event["i"] = index
 
@@ -821,6 +832,7 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "proposed_calls": proposed,
         "blocked_proposals": blocked,
         "has_decisions": bool(decisions),
+        "decision_artifact": decision_artifact,
         "unreviewed_stdin": unreviewed,
         "trace_source": trace_source,
         "created": result.get("created"),

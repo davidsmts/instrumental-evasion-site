@@ -248,8 +248,9 @@
       '<p class="muted">This run has no readable stream artifact.</p>';
 
     var shown = rowItems.filter(Boolean).length;
-    el.count.textContent = callNumber + ' tool call' + (callNumber === 1 ? '' : 's') +
-      ' · ' + shown + ' timeline rows';
+    el.count.textContent = callNumber +
+      (DATA.trace_source === 'codex-stdout' ? ' executed call' : ' tool call') +
+      (callNumber === 1 ? '' : 's') + ' · ' + shown + ' timeline rows';
   }
 
   function renderDecisions() {
@@ -269,7 +270,8 @@
       'is the monitor\'s own account of its decision, and an <code>ALLOW</code> ' +
       'is not evidence that the call was harmless.</p>' +
       '<p class="muted">' + DATA.decisions.length + ' reviewed · ' + blocked +
-      ' blocked · monitor ' + escapeHtml(DATA.monitor) + '</p></div>';
+      ' blocked · monitor ' + escapeHtml(DATA.monitor) + ' · source: ' +
+      escapeHtml(DATA.decision_artifact || 'decision log') + '</p></div>';
 
     el.decisions.innerHTML = head + '<div class="decision-list">' +
       DATA.decisions.map(function (d) {
@@ -432,7 +434,9 @@
         'to the running process was not.</p>';
     }
     if (DATA.decisions.length) {
-      coverage += '<p>Monitor decision log present: ' + DATA.decisions.length +
+      coverage += '<p>Monitor decisions available from the ' +
+        escapeHtml(DATA.decision_artifact || 'decision log') + ': ' +
+        DATA.decisions.length +
         ' reviewed calls, ' + DATA.verdicts_joined + ' matched to a call in the ' +
         'timeline.</p>';
     } else {
@@ -444,7 +448,12 @@
     el.coverage.innerHTML = coverage;
 
     el.traceNote.innerHTML = DATA.trace_source === 'codex-stdout'
-      ? '<strong>Executed calls only.</strong> ' + escapeHtml(note)
+      ? '<strong>Executed calls only.</strong> ' + (DATA.decisions.length
+        ? 'The Monitor decisions tab lists ' +
+          IME.number(DATA.decisions.length) + ' reviewed proposals, including ' +
+          IME.number(DATA.blocked_calls) + ' blocked, with their commands and reasons.'
+        : 'The episode reports ' + IME.number(DATA.blocked_calls) +
+          ' blocks, but this export has no per-call monitor decisions.')
       : '';
 
     el.runIdText.textContent = DATA.run_id;

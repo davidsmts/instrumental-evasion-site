@@ -60,10 +60,11 @@ Each run page has three panels:
 
 - **Run trace** — the normalized event timeline. Tool calls carry the monitor's
   `ALLOW`/`BLOCK` verdict and the reason string it returned, joined onto the
-  call. *Focus* hides private reasoning, harness boilerplate and the output of
-  calls that simply worked; *Full* shows everything.
-- **Monitor decisions** — every reviewed call in order, straight from the
-  decision log, for the runs whose log the export carries.
+  call. The timeline shows every recorded event, with reasoning and tool outputs
+  collapsed individually to keep long runs readable.
+- **Monitor decisions** — every reviewed call in order, from the selected
+  episode's `samples[0].decisions` record. A separate decision log is used only
+  when an older episode record lacks that list.
 - **Setup & scoring** — how the episode was scored, the policy, the monitor and
   agent configuration, and the fixed messages the agent was shown. It also
   shows the paper's Luna-judged evasion attempt classification and rationale.
@@ -78,12 +79,14 @@ does not validate Luna's interpretation.
 
 ### Evidence coverage, and why runs differ
 
-Coverage is uneven and the pages say so rather than papering over it:
+Timeline coverage differs by scaffold, while monitor decisions are available
+for every selected episode:
 
 | artifact | runs | what it gives |
 | --- | ---: | --- |
-| `stdout.txt` | 1200 | the agent transcript; the only universal source |
-| `decisions.jsonl` | 577 | every proposed call, its verdict and the monitor's reason |
+| `stdout.txt` | 1200 | the agent transcript |
+| `samples[0].decisions` in `result.json.gz` | 1200 | every proposed call, its verdict and the monitor's reason |
+| `decisions.jsonl` | 577 | separate copy of monitor decisions, used only as a fallback |
 | Codex session (`rollout-*.jsonl`) | 240 | proposals *and* denials as Codex recorded them |
 
 That yields three kinds of timeline. Claude Code's stream (300 runs) records
@@ -91,12 +94,13 @@ denied `tool_use` blocks, so it is complete. A Codex session (240 runs) is
 likewise complete. The remaining 660 Codex runs are reconstructed from stdout,
 which only ever contains calls that **ran** — a blocked proposal never enters
 that stream. Those runs are labelled *executed calls only* in the catalog and
-on the run page, and their blocked-call counts come from the episode record.
+on the run page. Their blocked proposals, including commands and monitor
+reasons, appear in the **Monitor decisions** panel from the episode record.
 
 ### The interception gap
 
 The Codex CLI reviews the command that launches an interactive process but not
-the input written to it afterwards. In a run whose decision log is present, a
+the input written to it afterwards. In a run with monitor decisions, a
 `write_stdin` call with no decision is that gap, and the timeline tags it
 `NOT INTERCEPTED` — five runs in the corpus, fifteen calls. The flag is
 deliberately limited to `write_stdin`: for any other call, an unmatched

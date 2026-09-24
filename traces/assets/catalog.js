@@ -201,7 +201,6 @@
 
   function matchesEvidence(run) {
     switch (FILTERS.evidence.value) {
-      case 'decisions': return run.has_decisions;
       case 'full': return run.trace_source !== 'codex-stdout';
       case 'blocked': return (run.blocked_calls || run.blocked_proposals) > 0;
       case 'stdin': return run.unreviewed_stdin > 0;

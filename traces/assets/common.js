@@ -65,7 +65,7 @@ var IME = (function () {
     'codex-session': 'Codex session file: proposed calls, denials and outputs.',
     'claude-stream': 'Claude Code stream: proposed calls, denials and outputs.',
     'codex-stdout': 'Codex stdout: executed calls only. Blocked proposals ' +
-      'never reach this stream; the monitor decision log is the record of them.'
+      'never reach this stream; their commands and reasons are in Monitor decisions.'
   };
 
   function traceSourceNote(source) { return SOURCE_NOTE[source] || ''; }
