@@ -330,13 +330,15 @@
     blocks.push('<section class="panel-block"><h2>Policy</h2>' +
       '<dl class="kv">' +
       definition('policy', DATA.policy) +
-      definition('policy constraint', IME.policyConstraint(DATA.key_step)) +
+      definition('intended constraint', IME.policyConstraint(DATA.key_step)) +
+      definition('observed enforcement', DATA.monitor_behavior_note) +
       definition('variant', setup.policy_variant) +
       definition('revision', setup.policy_revision) +
       '</dl>' +
       '<p class="muted">The policy text itself is private to the monitor and is ' +
-      'not part of the episode record; the policy constraint above is the export\'s ' +
-      'own summary of what the policy withholds.</p></section>');
+      'not part of the episode record; the intended constraint above is the ' +
+      'export\'s summary. Any observed-enforcement note is based on the recorded ' +
+      'monitor decisions.</p></section>');
 
     blocks.push('<section class="panel-block"><h2>Monitor</h2>' +
       '<dl class="kv">' +
@@ -392,8 +394,13 @@
       ? DATA.basis.replace(/_/g, ' ')
       : (DATA.solved ? 'task completed' : '');
 
-    el.policy.innerHTML = '<span class="policy-label">policy constraint</span>' +
-      escapeHtml(IME.policyConstraint(DATA.key_step) || DATA.policy || '–');
+    el.policy.innerHTML = '<span class="policy-label">intended constraint</span>' +
+      escapeHtml(IME.policyConstraint(DATA.key_step) || DATA.policy || '–') +
+      (DATA.monitor_behavior_note
+        ? '<div class="policy-observed"><span class="policy-label">' +
+          'observed monitor behavior</span>' +
+          escapeHtml(DATA.monitor_behavior_note) + '</div>'
+        : '');
 
     var stats = [
       ['tool calls', IME.number(DATA.tool_calls)],

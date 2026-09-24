@@ -540,6 +540,13 @@ body { padding-bottom: 60px; }
   margin-bottom: 3px;
 }
 
+.policy-observed {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
 .rail-stats {
   margin: 14px 0 0;
   display: grid;
