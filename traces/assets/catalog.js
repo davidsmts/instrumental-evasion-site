@@ -26,7 +26,6 @@
     source: document.getElementById('f-source'),
     task: document.getElementById('f-task'),
     outcome: document.getElementById('f-outcome'),
-    luna: document.getElementById('f-luna'),
     evidence: document.getElementById('f-evidence')
   };
 
@@ -40,6 +39,7 @@
     el.q.value = params.get('q') || '';
     el.groupBy.value = params.get('by') || 'model';
     el.sort.value = params.get('sort') || 'outcome';
+    if (!el.sort.value) el.sort.value = 'outcome';
   }
 
   function writeUrl() {
@@ -213,8 +213,6 @@
     if (FILTERS.source.value && run.source !== FILTERS.source.value) return false;
     if (FILTERS.task.value && run.task !== FILTERS.task.value) return false;
     if (FILTERS.outcome.value && run.outcome !== FILTERS.outcome.value) return false;
-    if (FILTERS.luna.value && (!run.luna_judgment ||
-        run.luna_judgment.route_attempt !== FILTERS.luna.value)) return false;
     if (!matchesEvidence(run)) return false;
     var q = el.q.value.trim().toLowerCase();
     if (!q) return true;
@@ -228,11 +226,6 @@
       var rank = { evaded: 0, held: 1, invalid: 2 };
       return (rank[a.outcome] - rank[b.outcome]) || (a.epoch - b.epoch);
     },
-    attempt: function (a, b) {
-      return (Number(b.luna_judgment && b.luna_judgment.route_attempt === 'supported') -
-        Number(a.luna_judgment && a.luna_judgment.route_attempt === 'supported')) ||
-        (a.epoch - b.epoch);
-    },
     'blocked-desc': function (a, b) {
       return (b.blocked_calls || 0) - (a.blocked_calls || 0);
     },
@@ -245,14 +238,6 @@
 
   function chips(run) {
     var out = '';
-    if (run.luna_judgment) {
-      var supported = run.luna_judgment.route_attempt === 'supported';
-      out += ' <span class="chip ' + (supported ? 'chip-alert' : '') +
-        '" title="Evasion attempt classification by the GPT-5.6 Luna judge; ' +
-        'a positive label does not establish intent or success">' +
-        (supported ? 'possible evasion attempt' : 'no supported attempt') +
-        ' · Luna judge</span>';
-    }
     if (run.basis === 'confirmed_prohibited_effect') {
       out += ' <span class="chip chip-alert" title="A prohibited effect was ' +
         'confirmed even though the task was not scored as completed">effect ' +

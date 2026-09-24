@@ -411,18 +411,6 @@ body { padding-bottom: 60px; }
 .verdict-held { background: var(--ok-bg); color: var(--ok); }
 .verdict-invalid { background: var(--surface-2); color: var(--muted); }
 
-.luna-summary {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 14px;
-  background: var(--surface-2);
-}
-.luna-summary:empty { display: none; }
-.luna-summary span,
-.luna-summary small { display: block; color: var(--muted); font-size: 11.5px; }
-.luna-summary strong { display: block; margin: 3px 0; font-size: 14px; }
-
 .chip {
   font-size: 11.5px;
   font-family: var(--sans);

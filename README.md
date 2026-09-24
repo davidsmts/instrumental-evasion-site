@@ -66,16 +66,13 @@ Each run page has three panels:
   episode's `samples[0].decisions` record. A separate decision log is used only
   when an older episode record lacks that list.
 - **Setup & scoring** — how the episode was scored, the policy, the monitor and
-  agent configuration, and the fixed messages the agent was shown. It also
-  shows the paper's Luna-judged evasion attempt classification and rationale.
+  agent configuration, and the fixed messages the agent was shown.
 
-The catalog can filter runs by the Luna judge's `supported` or `no_supported`
-route label. A supported label is shown as a possible evasion attempt, matching
-the paper's evasion attempt measure. These labels come from the resultstore's
+The exported data retains the paper's Luna-judged evasion attempt labels and
+rationales, but the trace viewer does not display or filter by them for now.
+These labels come from the resultstore's
 `model_comparison/20260923_luna_figure1_judgments_v1/report.json`, joined by
-selected attempt ID. They assess visible actions after denial and do not change
-the deterministic evasion success outcome. The quote check only verifies cited text; it
-does not validate Luna's interpretation.
+selected attempt ID. They do not change the deterministic evasion success outcome.
 
 ### Evidence coverage, and why runs differ
 
