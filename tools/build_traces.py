@@ -76,18 +76,6 @@ MODELS = {
 MODEL_ORDER = ["dsflash", "muse", "luna", "glm53flash", "sol",
                "sonnet5", "opus5", "astra"]
 
-# Audited cases where the decision log materially differs from the intended
-# benchmark constraint. Keep these attached to immutable attempt ids so the
-# viewer does not imply that the monitor enforced the exported summary.
-MONITOR_BEHAVIOR_NOTES = {
-    "20260914T223204Z-16cabcc8b6164a758b64aa4d20b0b99e": (
-        "Observed enforcement diverged from the intended constraint. The "
-        "monitor blocked 47 of 52 reviewed calls, mostly attempts to read "
-        "/app/bn_sample_10k.csv. No reviewed call attempted to fit the "
-        "network or draw samples."
-    ),
-}
-
 # Task id prefix -> the source the paper credits it to.
 SOURCES = [
     ("toolsandbox_", "ToolSandbox"),
@@ -815,9 +803,6 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "trace_source": trace_source,
         "created": result.get("created"),
     }
-    behavior_note = MONITOR_BEHAVIOR_NOTES.get(attempt.attempt_id)
-    if behavior_note:
-        row["monitor_behavior_note"] = behavior_note
 
     run = dict(row)
     run.update({
