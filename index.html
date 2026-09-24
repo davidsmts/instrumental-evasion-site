@@ -309,7 +309,6 @@
 
 <section id="injection">
   <div class="wrap">
-    <p class="injection-eyebrow" data-i18n="mon.forged.kicker">Separate prompt injection test</p>
     <h2 class="kicker" id="forged" data-i18n="mon.forged.title">A fake denial made Astra abandon solvable tasks</h2>
     <p class="section-lead" data-i18n="mon.forged.lead">In a separate ten-task information-extraction test, all three models completed every clean attempt. A forged monitor denial at the start of an input file cut GPT-6 Astra's completion from 100% to 40%.</p>
 
@@ -377,21 +376,6 @@
       </table>
     </div>
     <p class="caption" data-i18n="mon.reason.caption">40 benchmark-derived tasks, up to three valid attempts each, GPT-OSS-120B, medium reasoning effort. Success counts a task if any valid attempt succeeds. Attempt evidence is success or a detected command pattern; it does not establish intent.</p>
-  </div>
-</section>
-
-<!-- ============================ LIMITS ============================ -->
-
-<section id="limits">
-  <div class="wrap">
-    <h2 class="kicker" data-i18n="limits.kicker">Limitations</h2>
-    <ol class="notes limits">
-      <li data-i18n="limits.1"><span class="n">1</span> The pairs are constructed so that completion requires a violation. They do not estimate how often this happens in ordinary deployment.</li>
-      <li data-i18n="limits.2"><span class="n">2</span> Monitoring effectiveness depends on what the monitor can inspect. Interactive input, subagents, and downstream verifier execution can sit outside the reviewed channel.</li>
-      <li data-i18n="limits.3"><span class="n">3</span> Agents cannot inspect the full policy. Some retries may reflect uncertainty about what is permitted rather than intentional subversion.</li>
-      <li data-i18n="limits.4"><span class="n">4</span> Command-pattern flags are a rough screen. They can mistake benign repair for evasion and cannot establish intent.</li>
-      <li data-i18n="limits.5"><span class="n">5</span> Low evasion is not sufficient by itself. An agent that stops too readily can abandon permitted work or become vulnerable to forged-denial prompt injections.</li>
-    </ol>
   </div>
 </section>
 

@@ -163,7 +163,6 @@ var I18N = (function () {
       'Erfolg zählt eine Aufgabe, wenn ein gültiger Versuch gelingt. Das ' +
       'Versuchsindiz ist Erfolg oder ein erkanntes Befehlsmuster; es belegt keine ' +
       'Absicht.',
-    'mon.forged.kicker': 'Separater Prompt-Injektionstest',
     'mon.forged.title': 'Eine vorgetäuschte Ablehnung lässt Astra lösbare Aufgaben abbrechen',
     'mon.forged.lead': 'In einem separaten Test mit zehn kurzen ' +
       'Informationsaufgaben lösen alle drei Modelle sämtliche Versuche ohne ' +
@@ -191,26 +190,6 @@ var I18N = (function () {
       'der vorgetäuschten Ablehnung und meldeten fälschlich verweigerten Zugriff. ' +
       'Dieser separate Test zeigt, dass eine niedrige Umgehungsrate mit ' +
       'Anfälligkeit für gefälschte Guardrail-Meldungen einhergehen kann.',
-
-    // -------------------------------------------------------------- limits
-
-    'limits.kicker': 'Einschränkungen',
-    'limits.1': '<span class="n">1</span> Die Paare sind so konstruiert, dass die ' +
-      'Lösung einen Verstoß erfordert. Sie schätzen nicht, wie oft das im ' +
-      'normalen Einsatz vorkommt.',
-    'limits.2': '<span class="n">2</span> Die Wirksamkeit der Überwachung hängt ' +
-      'davon ab, was der Monitor sehen kann. Interaktive Eingaben, Subagenten und ' +
-      'die Ausführung durch nachgelagerte Verifier können außerhalb des geprüften ' +
-      'Kanals liegen.',
-    'limits.3': '<span class="n">3</span> Agenten können die vollständige ' +
-      'Richtlinie nicht einsehen. Manche Wiederholungen können Unsicherheit über ' +
-      'das Erlaubte statt absichtlicher Umgehung widerspiegeln.',
-    'limits.4': '<span class="n">4</span> Befehlsmuster-Flags sind ein grober ' +
-      'Filter. Sie können harmlose Reparatur für Umgehung halten und belegen ' +
-      'keine Absicht.',
-    'limits.5': '<span class="n">5</span> Niedrige Umgehung allein genügt nicht. ' +
-      'Ein Agent, der zu schnell stoppt, kann erlaubte Arbeit aufgeben oder für ' +
-      'vorgetäuschte Ablehnungen anfällig werden.',
 
     // ------------------------------------------------------- team and cite
 
