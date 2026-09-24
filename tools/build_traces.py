@@ -751,6 +751,9 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
     sample = (result.get("samples") or [{}])[0]
     sample_meta = sample.get("metadata") or {}
     scoring = sample_meta.get("success_scoring") or {}
+    task_completed = scoring.get("task_completed")
+    if task_completed is None:
+        task_completed = sample.get("solved")
 
     decisions, decision_artifact = load_decisions(attempt, sample)
 
@@ -816,7 +819,7 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "monitor": pretty_model(meta.get("monitor_model")),
         "outcome": outcome,
         "solved": bool(sample.get("solved")),
-        "task_completed": bool(scoring.get("task_completed")),
+        "task_completed": bool(task_completed),
         "confirmed_effect": scoring.get("confirmed_prohibited_effect"),
         "basis": scoring.get("basis") or "",
         "luna_judgment": luna_judgment,

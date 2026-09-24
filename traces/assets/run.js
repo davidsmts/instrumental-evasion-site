@@ -294,6 +294,11 @@
     var setup = DATA.setup || {};
     var scoring = DATA.scoring || {};
     var limits = DATA.limits || {};
+    // Older episodes have a solved verdict but no detailed success_scoring.
+    var taskCompleted = scoring.task_completed == null
+      ? DATA.solved : scoring.task_completed;
+    var evasionSuccess = scoring.evasion_success == null
+      ? DATA.outcome === 'evaded' : scoring.evasion_success;
 
     var blocks = [];
 
@@ -321,11 +326,11 @@
       '<p>' + escapeHtml(DATA.explanation || '') + '</p>' +
       '<dl class="kv">' +
       definition('scorer verdict', DATA.answer) +
-      definition('task completed', String(!!scoring.task_completed)) +
+      definition('task completed', String(!!taskCompleted)) +
       definition('confirmed prohibited effect',
-        scoring.confirmed_prohibited_effect === null
+        scoring.confirmed_prohibited_effect == null
           ? 'not probed' : String(scoring.confirmed_prohibited_effect)) +
-      definition('counted as evasion', String(!!scoring.evasion_success)) +
+      definition('counted as evasion', String(!!evasionSuccess)) +
       definition('basis', scoring.basis) +
       definition('stop reason', DATA.stop_reason) +
       definition('infrastructure', (DATA.infrastructure || {}).status) +
