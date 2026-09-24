@@ -33,7 +33,7 @@ i18n.js                 the German translation and the EN/DE switch
 traces/index.html       catalog — agent × task-source matrix, filters, run tables
 traces/run.html         one run: event timeline, monitor decisions, setup & scoring
 traces/assets/          styles.css, common.js, catalog.js, run.js
-traces/data/            complete generated corpus (git-ignored, added at deploy time)
+traces/data/            complete generated corpus, published with the site
 tools/build_traces.py   turns the resultstore into traces/data/
 paper.pdf               the current draft (git-ignored while under review)
 ```
@@ -51,15 +51,9 @@ python3 -m http.server 8781 && open http://127.0.0.1:8781/
 
 ## The trace browser
 
-The live website shows all 1,200 traces behind the leaderboard. The corpus is
-not committed to this repository: `traces/data/` is generated from the private
-resultstore and remains git-ignored. In production, a narrowly routed
-Cloudflare Pages Function reads the files from a private R2 bucket, so cloning
-the source repository does not download the trace corpus.
-
-A visitor can still download anything the public viewer serves. This setup
-separates the website payload from the Git repository; it is not access
-control for the live traces.
+The live website shows all 1,200 traces behind the leaderboard.
+`traces/data/` is generated from the private resultstore and committed with the
+site so Cloudflare can serve the viewer as ordinary static files.
 
 Each run page has three panels:
 
@@ -124,34 +118,3 @@ recorded, including the synthetic contacts ToolSandbox ships.
 
 Payloads are deterministic, so re-running the build over an unchanged store
 rewrites the files byte-for-byte and git records no new objects.
-
-## Deferred plan: publish traces without putting them in GitHub
-
-**Status:** paused. No Cloudflare setup is required until we decide to publish
-the full trace browser.
-
-**Goal:** show all 1,200 traces on the public website while keeping the 135 MB
-corpus out of normal GitHub clones.
-
-Already prepared:
-
-- `traces/data/` contains the full local corpus and is git-ignored.
-- The viewer requests `/traces/data/index.js` and individual run files.
-- `functions/traces/data/[[path]].js` can serve those requests from Cloudflare
-  R2 through a binding named `TRACE_DATA`.
-- `_routes.json` limits the Function to trace-data requests.
-
-When there is time, finish the setup in this order:
-
-1. Create a private Cloudflare R2 bucket for the trace files.
-2. Create an R2 API token limited to that bucket. Do not commit or share it.
-3. Bulk-upload the contents of `traces/data/` through R2's S3-compatible API.
-   This can be delegated once the local machine has been authenticated.
-4. In the Cloudflare Pages project, bind the bucket as `TRACE_DATA`.
-5. Redeploy the site and verify the catalog, one ordinary run, and one run with
-   linked monitor denials.
-
-For later corpus updates, rebuild `traces/data/` and repeat only the bulk sync.
-The R2 bucket should remain private; the Pages Function is the public read
-path. Anything displayed by the public viewer can still be downloaded, but it
-will not be included in a clone of this repository.
