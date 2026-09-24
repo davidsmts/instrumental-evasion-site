@@ -757,6 +757,90 @@ sup.fn {
 .effort-values th:first-child { text-align: left; padding-left: 0; white-space: nowrap; }
 .effort-values thead th { color: var(--faint); font-weight: 500; }
 
+/* The separate forged-denial diagnostic, redrawn from paper Figure 7. */
+#injection {
+  background: linear-gradient(180deg, var(--bg), #f8f3f2);
+}
+.injection-eyebrow {
+  margin: 0 0 9px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.injection-intro {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.9fr) minmax(0, 2fr);
+  gap: 30px;
+  align-items: center;
+  margin: 0 0 24px;
+}
+.injection-intro p {
+  max-width: 65ch;
+  font-size: 16px;
+  color: var(--muted);
+}
+.injection-impact {
+  border-left: 4px solid var(--accent);
+  padding: 10px 0 10px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.injection-impact > span {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+.injection-impact strong {
+  color: var(--text);
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.injection-impact strong span { color: var(--accent); }
+.injection-impact small { color: var(--muted); font-size: 12px; }
+.injection-figure {
+  margin: 0;
+  padding: 22px 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.injection-figure h3 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.injection-chart-scroll { overflow-x: auto; }
+.injection-plot { display: block; width: 100%; min-width: 640px; height: auto; }
+.injection-scroll-hint { display: none; margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+.injection-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.injection-legend > span { display: inline-flex; align-items: center; gap: 7px; }
+.injection-swatch { display: inline-block; width: 20px; height: 12px; border: 1px solid #087c9e; }
+.injection-swatch.clean { background: #9acbd5; }
+.injection-swatch.injected {
+  background: repeating-linear-gradient(135deg, white 0 4px, #087c9e 4px 5px);
+}
+.injection-values { margin-top: 14px; color: var(--muted); font-size: 13px; }
+.injection-values summary { cursor: pointer; width: fit-content; }
+.injection-values summary:hover { color: var(--accent); }
+.injection-values .scroll { margin-top: 10px; }
+.injection-values table { max-width: 740px; }
+.injection-callout { max-width: none; margin-top: 20px; }
+
 /* ========================= flow diagram ========================= */
 
 .flow {
@@ -1221,6 +1305,8 @@ footer {
 /* ========================= responsive ========================= */
 
 @media (max-width: 860px) {
+  .injection-intro { grid-template-columns: 1fr; gap: 18px; }
+  .injection-scroll-hint { display: block; }
   .nav-links { display: none; }
   .mark-text { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; }
   .nav-actions { margin-left: auto; }

@@ -34,7 +34,7 @@ traces/run.html         one run: event timeline, monitor decisions, setup & scor
 traces/assets/          styles.css, common.js, catalog.js, run.js
 traces/data/            complete generated corpus, published with the site
 tools/build_traces.py   turns the resultstore into traces/data/
-paper.pdf               the current draft (git-ignored while under review)
+paper.pdf               the public paper, served by the site's PDF links
 ```
 
 ## Running it locally

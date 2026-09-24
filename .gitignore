@@ -1,5 +1,4 @@
-# Draft paper is under double-blind review — keep it out of the public repo.
-paper.pdf
+# The public paper PDF is committed with the site.
 
 # Python bytecode from the trace build script.
 __pycache__/
