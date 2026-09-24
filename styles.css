@@ -693,27 +693,30 @@ sup.fn {
 
 .callout.compact p { margin: 0; }
 
-/* Separate reasoning-effort study, matching Figure 4's categorical x-axis. */
+/* Two panels from the separate reasoning-effort study. */
 .effort-figure {
-  margin: 24px 0 0;
+  margin: 32px 0 0;
   padding: 22px 24px 18px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--surface);
 }
 .effort-figure h3 {
-  margin: 0 0 2px;
+  margin: 0 0 8px;
   font-size: 19px;
   font-weight: 650;
   letter-spacing: -0.02em;
 }
-.effort-axis-label {
-  margin: 0 0 4px;
+.effort-intro {
+  max-width: 82ch;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  margin-bottom: 12px;
 }
 .effort-chart-scroll { overflow-x: auto; }
-.effort-plot { display: block; width: 100%; min-width: 640px; height: auto; }
+.effort-plot { display: block; width: 100%; min-width: 780px; height: auto; }
+.effort-scroll-hint { display: none; margin: 4px 0 10px; color: var(--faint); font-size: 12px; }
 .effort-legend {
   display: flex;
   flex-wrap: wrap;
@@ -752,7 +755,9 @@ sup.fn {
 .effort-values summary { cursor: pointer; width: fit-content; }
 .effort-values summary:hover { color: var(--accent); }
 .effort-table-scroll { overflow-x: auto; margin-top: 10px; }
-.effort-values table { border-collapse: collapse; min-width: 590px; font-variant-numeric: tabular-nums; }
+.effort-values table { border-collapse: collapse; min-width: 590px; font-variant-numeric: tabular-nums; margin-bottom: 18px; }
+.effort-values table:last-child { margin-bottom: 0; }
+.effort-values caption { color: var(--text); font-weight: 600; text-align: left; padding-bottom: 6px; }
 .effort-values th, .effort-values td { padding: 7px 12px; text-align: right; border-bottom: 1px solid var(--line-soft); }
 .effort-values th:first-child { text-align: left; padding-left: 0; white-space: nowrap; }
 .effort-values thead th { color: var(--faint); font-weight: 500; }
@@ -806,6 +811,7 @@ sup.fn {
 .injection-impact small { color: var(--muted); font-size: 12px; }
 .injection-figure {
   margin: 0;
+  max-width: 820px;
   padding: 22px 24px 20px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -841,181 +847,30 @@ sup.fn {
 .injection-values table { max-width: 740px; }
 .injection-callout { max-width: none; margin-top: 20px; }
 
-/* ========================= flow diagram ========================= */
-
-.flow {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 26px 24px 22px;
-}
-
-.flow-hidden {
-  font-family: var(--sans);
-  font-size: 13px;
-  letter-spacing: 0;
-  color: var(--faint);
-  text-align: center;
-  margin-bottom: 14px;
-}
-
-.flow-grid {
+/* Two monitor diagnostics from the paper's monitor comparison. */
+.monitor-grid {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
-  align-items: stretch;
-  gap: 10px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 34px;
 }
-
-.node {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.monitor-panel { min-width: 0; margin: 0; }
+.monitor-panel h3 {
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
 }
+.monitor-panel .caption { margin-top: 10px; }
+.monitor-panel td, .monitor-panel th { padding-right: 8px; }
+.monitor-panel td:last-child, .monitor-panel th:last-child { padding-right: 0; }
 
-.node-monitor { border-color: var(--accent-soft); background: var(--accent-faint); }
-.node-exec { border-color: color-mix(in srgb, var(--ok) 50%, transparent); background: var(--ok-bg); }
+/* ========================= run setup ========================= */
 
-.node-label {
-  font-weight: 600;
-  font-size: 14.5px;
-}
+.setup-copy { max-width: 78ch; }
+.setup-copy p { margin: 0 0 18px; }
+.setup-copy p:last-child { margin-bottom: 0; }
+.setup-example { color: var(--muted); font-size: 15px; }
 
-.node-sub {
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
-.flow-arrow {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  min-width: 118px;
-}
-
-.flow-arrow span {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  color: var(--faint);
-  text-align: center;
-  line-height: 1.3;
-}
-
-.flow-arrow i {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--line);
-  position: relative;
-}
-.flow-arrow i::after {
-  content: "";
-  position: absolute;
-  right: 0; top: -3px;
-  border: 3.5px solid transparent;
-  border-left-color: var(--line);
-}
-.flow-arrow.allow span { color: var(--ok); }
-.flow-arrow.allow i, .flow-arrow.allow i::after { background: var(--ok); border-left-color: var(--ok); }
-.flow-arrow.allow i { background: var(--ok); }
-
-.flow-return {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--line);
-  font-size: 13px;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.runtime-feedback {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  gap: 14px;
-  margin-top: 18px;
-}
-
-.runtime-feedback .quote-box { margin: 0; }
-.runtime-feedback .qb-label {
-  font-family: var(--sans);
-  font-size: 13px;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--muted);
-}
-
-/* ========================= quote boxes / defs ========================= */
-
-.quote-box {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin: 0 0 16px;
-}
-
-.quote-box.injected { border-color: var(--accent-soft); background: var(--accent-faint); }
-
-.qb-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--faint);
-  margin: 0 0 7px;
-}
-
-.qb-text {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text);
-}
-.qb-text.mono { font-family: var(--mono); font-size: 13px; }
-
-/* Spec list: label on the left, value on the right. Carries the setup that
-   used to be four paragraphs of prose. */
-.spec {
-  margin: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.spec > div {
-  display: grid;
-  grid-template-columns: 116px minmax(0, 1fr);
-  gap: 14px;
-  align-items: baseline;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--line-soft);
-}
-.spec > div:last-child { border-bottom: 0; padding-bottom: 0; }
-
-.spec dt {
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--faint);
-}
-
-.spec dd {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.55;
-}
-
-/* Detail that most readers do not need, one click away. */
 details.more {
   margin-top: 22px;
   border-top: 1px solid var(--line-soft);
@@ -1034,15 +889,12 @@ details.more[open] > summary::before { content: "\25BE  "; }
 details.more > summary:hover { color: var(--accent); }
 details.more[open] > summary { margin-bottom: 4px; }
 
-/* Team */
-
 .authors {
   font-size: 16px;
   line-height: 1.9;
   max-width: 72ch;
   margin: 0 0 10px;
 }
-
 .authors sup { font-size: 10px; color: var(--muted); }
 
 .affil {
@@ -1053,38 +905,7 @@ details.more[open] > summary { margin-bottom: 4px; }
   line-height: 1.7;
 }
 .affil sup { color: var(--faint); }
-
 .star { color: var(--accent); }
-
-.defs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 22px;
-  margin-top: 8px;
-}
-
-.def h4 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  font-weight: 600;
-}
-.def p { font-size: 15px; color: var(--muted); margin: 0; }
-
-.example {
-  margin-top: 32px;
-  background: var(--surface-2);
-  border-radius: 8px;
-  padding: 18px 20px;
-}
-.ex-label {
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--accent);
-  margin: 0 0 8px;
-}
-.example p:last-child { font-size: 15.5px; color: var(--muted); }
 
 /* ========================= tabs ========================= */
 
@@ -1305,6 +1126,7 @@ footer {
 /* ========================= responsive ========================= */
 
 @media (max-width: 860px) {
+  .monitor-grid { grid-template-columns: 1fr; gap: 28px; }
   .injection-intro { grid-template-columns: 1fr; gap: 18px; }
   .injection-scroll-hint { display: block; }
   .nav-links { display: none; }
@@ -1312,10 +1134,6 @@ footer {
   .nav-actions { margin-left: auto; }
   .cols-2 { columns: 1; }
   .grid-2 { grid-template-columns: 1fr; gap: 32px; }
-  .flow-grid { grid-template-columns: 1fr; }
-  .runtime-feedback { grid-template-columns: 1fr; }
-  .flow-arrow { min-width: 0; flex-direction: row; gap: 10px; padding: 2px 0; }
-  .flow-arrow i { width: 40px; }
   .trace-card { grid-template-columns: 1fr; }
   .trace-card > header {
     grid-column: 1;
@@ -1328,7 +1146,7 @@ footer {
 }
 
 @media (max-width: 1080px) {
-  .chart-scroll-hint { display: block; }
+  .chart-scroll-hint, .effort-scroll-hint { display: block; }
 }
 
 @media (max-width: 560px) {
