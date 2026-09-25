@@ -189,32 +189,6 @@ header#top {
   border-bottom: 1px solid var(--line);
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 4px 12px 4px 4px;
-  margin: 0 0 24px;
-}
-
-.badge-tag {
-  background: var(--accent);
-  color: var(--surface);
-  border-radius: 999px;
-  padding: 2px 9px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-
-
 h1 {
   font-family: var(--serif);
   font-size: clamp(38px, 5.5vw, 62px);
@@ -231,13 +205,6 @@ h1 {
   color: var(--text);
   max-width: 62ch;
   margin: 0 0 18px;
-}
-
-.hero-body {
-  color: var(--muted);
-  max-width: 68ch;
-  font-size: 17px;
-  margin: 0 0 28px;
 }
 
 .cta {
@@ -797,7 +764,8 @@ sup.fn {
 .injection-impact strong span { color: var(--accent); }
 .injection-impact small { color: var(--muted); font-size: 12px; }
 .injection-figure {
-  margin: 0;
+  max-width: 760px;
+  margin: 0 auto;
   padding: 22px 24px 20px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -830,15 +798,11 @@ sup.fn {
 .injection-values summary { cursor: pointer; width: fit-content; }
 .injection-values summary:hover { color: var(--accent); }
 .injection-values .scroll { margin-top: 10px; }
-.injection-callout { margin-top: 20px; }
-
 /* ========================= run setup ========================= */
 
 .setup-copy { max-width: 78ch; }
 .setup-copy p { margin: 0 0 18px; }
 .setup-copy p:last-child { margin-bottom: 0; }
-.setup-example { color: var(--muted); font-size: 15px; }
-
 details.more {
   margin-top: 22px;
   border-top: 1px solid var(--line-soft);

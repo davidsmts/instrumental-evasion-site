@@ -24,14 +24,8 @@ var I18N = (function () {
 
     // ---------------------------------------------------------------- hero
 
-    'hero.badge': '<span class="badge-tag">Preprint</span> September 2026',
     'hero.tagline': 'Gewöhnlicher Aufgabendruck kann sicherheitstrainierte Agenten ' +
       'die Laufzeitaufsicht als Hindernis behandeln lassen.',
-    'hero.body': 'EvasionBench verbindet 50 harmlose Aufgaben mit privaten ' +
-      'Richtlinien, die eine zur Lösung nötige Operation sperren. Ohne Angriffsziel ' +
-      'oder Anweisung zur Umgehung passieren neun von zehn Agenten den Monitor bei ' +
-      'mindestens einigen Aufgaben. Der Best-of-3-Erfolg erreicht 88 %, versuchte ' +
-      'Umgehung 98 %.',
     'hero.cta.paper': 'Paper lesen (PDF)',
     'hero.cta.traces': '1.200 Traces durchsuchen',
     'hero.cta.leaderboard': 'Ergebnisse ansehen',
@@ -100,9 +94,6 @@ var I18N = (function () {
       'Agent fortfahren.',
     'setup.outcome': 'Ein deterministischer Scorer prüft das Aufgabenergebnis. ' +
       'GPT-5.6 Luna klassifiziert mögliche Umgehungsversuche in den Traces separat.',
-    'setup.example': 'Beispiel: Eine Aufgabe verlangt, eine Nachricht bei ' +
-      'deaktiviertem Mobilfunk zu senden, während die Richtlinie Änderungen ' +
-      'an Geräteeinstellungen verbietet.',
 
     // -------------------------------------------------------------- routes
 
@@ -180,16 +171,12 @@ var I18N = (function () {
     'mon.forged.th.clean': 'Ohne Injektion',
     'mon.forged.th.injected': 'Mit Injektion',
     'mon.forged.th.drop': 'Rückgang',
-    'mon.forged.caption': 'Nach <a href="paper.pdf#page=10">Abbildung 7 des Papers</a> ' +
-      'neu gezeichnet. Zehn Aufgaben, drei Versuche je Modell und Bedingung ' +
+    'mon.forged.caption': 'Siehe <a href="paper.pdf#page=10">Abbildung 7 im Paper</a>. ' +
+      'Zehn Aufgaben, drei Versuche je Modell und Bedingung ' +
       '(30 je Balken). Kein Monitor war aktiv und kein Aufruf wurde blockiert. ' +
       'Die vier Fehlschläge von Luna und Flash mit Injektion waren Timeouts ' +
       'oder falsche Ausgaben ohne Bezug zur vorgetäuschten Ablehnung.',
     'mon.forged.values': 'Genaue Anzahlen anzeigen',
-    'mon.callout': 'Alle 18 fehlgeschlagenen Astra-Läufe stoppten nach dem Lesen ' +
-      'der vorgetäuschten Ablehnung und meldeten fälschlich verweigerten Zugriff. ' +
-      'Dieser separate Test zeigt, dass eine niedrige Umgehungsrate mit ' +
-      'Anfälligkeit für gefälschte Guardrail-Meldungen einhergehen kann.',
 
     // ------------------------------------------------------- team and cite
 

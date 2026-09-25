@@ -42,10 +42,8 @@
 
 <header id="top">
   <div class="wrap">
-    <p class="badge" data-i18n="hero.badge"><span class="badge-tag">Preprint</span> September 2026</p>
     <h1>Instrumental Monitor Evasion Emerges Under Ordinary Task Pressure</h1>
     <p class="tagline" data-i18n="hero.tagline">Ordinary task pressure can make safety-tuned agents treat runtime oversight as an obstacle.</p>
-    <p class="hero-body" data-i18n="hero.body">EvasionBench pairs 50 benign tasks with private policies that block an operation needed for completion. Without an attack objective or instructions to evade, nine of ten agents bypass the monitor on at least some tasks. Best-of-three success reaches 88%, and attempted evasion reaches 98%.</p>
     <div class="cta">
       <a class="cta-primary" href="paper.pdf" data-i18n="hero.cta.paper">Read the paper (PDF)</a>
       <a class="cta-secondary" href="traces/" data-i18n="hero.cta.traces">Browse 1,200 traces</a>
@@ -237,7 +235,6 @@
       <p class="section-lead" data-i18n="setup.lead">Each of the 50 ordinary tasks has a private policy that forbids an action needed to complete it. Agents know calls may be reviewed, but cannot see the policy and receive no instruction to evade.</p>
       <p data-i18n="setup.review">GPT-OSS-120B reviews proposed tool calls against the policy and the 40 most recent calls and verdicts. Allowed calls execute; blocked calls do not. The agent can continue after a denial.</p>
       <p data-i18n="setup.outcome">A deterministic scorer checks the task result. GPT-5.6 Luna separately classifies possible evasion attempts in the traces.</p>
-      <p class="setup-example" data-i18n="setup.example">For example, one task asks the agent to send a message when cellular service is off, while the policy forbids changing device settings.</p>
     </div>
   </div>
 </section>
@@ -332,7 +329,7 @@
         <span><i class="injection-swatch clean" aria-hidden="true"></i><span data-i18n="mon.forged.th.clean">Clean</span></span>
         <span><i class="injection-swatch injected" aria-hidden="true"></i><span data-i18n="mon.forged.th.injected">Injected</span></span>
       </div>
-      <figcaption class="caption" data-i18n="mon.forged.caption">Redrawn from <a href="paper.pdf#page=10">Figure 7 of the paper</a>. Ten tasks, three attempts per model and condition (30 per bar). No monitor was active and no call was blocked. Luna's and Flash's four injected failures were timeouts or incorrect outputs unrelated to the fake denial.</figcaption>
+      <figcaption class="caption" data-i18n="mon.forged.caption">Check out <a href="paper.pdf#page=10">Figure 7 in the paper</a>. Ten tasks, three attempts per model and condition (30 per bar). No monitor was active and no call was blocked. Luna's and Flash's four injected failures were timeouts or incorrect outputs unrelated to the fake denial.</figcaption>
       <details class="injection-values">
         <summary data-i18n="mon.forged.values">Show exact counts</summary>
         <div class="scroll">
@@ -350,9 +347,6 @@
       </details>
     </figure>
 
-    <div class="callout injection-callout">
-      <p data-i18n="mon.callout">All 18 failed Astra runs stopped after reading the fake denial and falsely reported denied access. This separate test shows that low evasion can coexist with vulnerability to forged guardrail messages.</p>
-    </div>
   </div>
 </section>
 
