@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" data-page="landing">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,13 +14,12 @@
 
 <nav id="topnav">
   <div class="nav-inner">
-    <a class="mark" href="#top">
+    <a class="mark" href="#top" aria-label="Instrumental Monitor Evasion">
       <span class="mark-dot"></span>
       <span class="mark-text">Instrumental Monitor Evasion</span>
     </a>
     <div class="nav-links">
       <a href="#leaderboard" data-i18n="nav.leaderboard">Results</a>
-      <a href="traces/" data-i18n="nav.traces">Traces</a>
       <a href="#setup" data-i18n="nav.setup">Setup</a>
       <a href="#routes" data-i18n="nav.routes">Routes</a>
       <a href="#injection" data-i18n="nav.injection">Prompt injection</a>
@@ -32,6 +31,10 @@
         <button type="button" class="lang-btn" data-lang="en" aria-pressed="true">EN</button>
         <button type="button" class="lang-btn" data-lang="de" aria-pressed="false">DE</button>
       </div>
+      <a class="nav-traces" href="traces/">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 9 3 3-3 3m6 0h4"/></svg>
+        <span data-i18n="nav.traces">Traces</span>
+      </a>
       <a class="nav-cta" href="https://arxiv.org/abs/2609.30217" data-i18n="nav.paper">Paper<span class="nav-cta-ext"> arXiv</span></a>
     </div>
   </div>

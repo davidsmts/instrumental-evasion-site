@@ -73,6 +73,8 @@ code {
 
 /* ========================= nav ========================= */
 
+:root[data-page="landing"] { --nav-h: 64px; }
+
 #topnav {
   position: sticky;
   top: 0;
@@ -85,13 +87,13 @@ code {
 }
 
 .nav-inner {
-  max-width: var(--measure);
-  margin: 0 auto;
-  padding: 0 28px;
+  width: 100%;
+  padding: 0 clamp(18px, 3vw, 48px);
   height: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
+  column-gap: 32px;
 }
 
 .mark {
@@ -116,14 +118,17 @@ code {
 
 .nav-links {
   display: flex;
-  gap: 4px;
-  margin-left: auto;
+  gap: 10px;
+  justify-self: center;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
   scrollbar-width: none;
 }
 .nav-links::-webkit-scrollbar { display: none; }
 
 .nav-links a {
+  flex: none;
   color: var(--muted);
   text-decoration: none;
   font-size: 13.5px;
@@ -137,7 +142,9 @@ code {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding-left: 24px;
+  border-left: 1px solid var(--line);
 }
 
 /* EN/DE switch. */
@@ -164,10 +171,22 @@ code {
 .lang-btn:hover { color: var(--text); }
 .lang-btn.is-active { background: var(--accent-faint); color: var(--accent); }
 
-/* German runs long; the nav gives up the wordmark before the controls. */
-@media (max-width: 1040px) {
-  :root[data-lang="de"] .mark-text { display: none; }
+.nav-traces {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 999px;
+  background: var(--accent-faint);
+  color: var(--accent);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
 }
+.nav-traces:hover { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.nav-traces:focus-visible, .nav-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .nav-cta {
   flex: none;
@@ -1056,12 +1075,20 @@ footer {
 
 /* ========================= responsive ========================= */
 
+@media (max-width: 1280px) {
+  :root[data-page="landing"] { --nav-h: 108px; }
+  .nav-inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 64px 44px;
+    column-gap: 24px;
+  }
+  .nav-links { grid-column: 1 / -1; grid-row: 2; }
+  .nav-actions { grid-column: 2; grid-row: 1; }
+}
+
 @media (max-width: 860px) {
   .injection-intro { grid-template-columns: 1fr; gap: 18px; }
   .injection-scroll-hint { display: block; }
-  .nav-links { display: none; }
-  .mark-text { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; }
-  .nav-actions { margin-left: auto; }
   .cols-2 { columns: 1; }
   .grid-2 { grid-template-columns: 1fr; gap: 32px; }
   .trace-card { grid-template-columns: 1fr; }
@@ -1088,6 +1115,10 @@ footer {
   .step .tag { grid-column: 2; justify-self: start; margin-top: 4px; }
   .cards { grid-template-columns: 1fr; }
   .nav-cta-ext { display: none; }
+  .nav-inner { column-gap: 12px; }
+  .mark-text { display: none; }
+  .nav-actions { gap: 8px; padding-left: 0; border-left: 0; }
+  .nav-links { gap: 6px; }
 }
 
 @media print {
