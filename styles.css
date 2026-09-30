@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&display=swap");
 
 :root {
-  --bg: #fbfaf8;
+  --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #f5f3ef;
   --text: #17161a;
@@ -727,7 +727,7 @@ sup.fn {
 
 /* The separate forged-denial diagnostic, redrawn from paper Figure 7. */
 #injection {
-  background: linear-gradient(180deg, var(--bg), #f8f3f2);
+  background: var(--bg);
 }
 .injection-intro {
   display: grid;

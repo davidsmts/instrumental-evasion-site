@@ -29,12 +29,13 @@ The trace browser under `traces/` is English only.
 index.html              the paper summary — results figure, setup, routes, injection, feedback
 styles.css, app.js      the landing page
 i18n.js                 the German translation and the EN/DE switch
+favicon.svg             the red square from the landing page wordmark
 traces/index.html       catalog — agent × task-source matrix, filters, run tables
 traces/run.html         one run: event timeline, monitor decisions, setup & scoring
 traces/assets/          styles.css, common.js, catalog.js, run.js
 traces/data/            complete generated corpus, published with the site
 tools/build_traces.py   turns the resultstore into traces/data/
-paper.pdf               the public paper, served by the site's PDF links
+paper.pdf               local paper copy; the landing page links to arXiv
 ```
 
 ## Running it locally
