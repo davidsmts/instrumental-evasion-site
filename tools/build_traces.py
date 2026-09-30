@@ -744,6 +744,66 @@ def attach_verdicts(events: list[dict], decisions: list[dict],
 # one run
 # --------------------------------------------------------------------------
 
+def restore_user_messages(events: list[dict], messages: list[dict]) -> list[dict]:
+    """Recover episode inputs omitted by the CLI's stdout stream.
+
+    One user message starts each invocation. Some Claude streams also contain
+    internal retries, so when counts differ, anchor continuations to the
+    preceding final response instead of assuming every init is a new turn.
+    """
+    users = []
+    previous_response = ""
+    for message in messages:
+        content = message.get("content")
+        if not isinstance(content, str):
+            continue
+        if message.get("role") == "assistant":
+            previous_response = clip(content, MAX_TEXT)[0].strip()
+        elif message.get("role") == "user" and content.strip():
+            users.append((redact(content), previous_response))
+    if not users:
+        return events
+
+    start = next((index + 1 for index, event in enumerate(events)
+                  if event["kind"] == "session_start"), 0)
+    stages = [index + 1 for index, event in enumerate(events)
+              if event["kind"] == "stage"]
+    positions = [start] + stages
+    if len(positions) != len(users):
+        positions = [start]
+        cursor = start
+        for _, response in users[1:]:
+            match = next((index for index in range(cursor, len(events))
+                          if events[index]["kind"] == "result"
+                          and (events[index].get("text") or "").strip() == response), None)
+            boundary = next((position for position in stages
+                             if match is not None and position > match), None)
+            if boundary is None:
+                raise ValueError("could not locate a recorded user message in the stream")
+            positions.append(boundary)
+            cursor = boundary
+
+    additions = {}
+    for index, (text, _) in enumerate(users):
+        position = positions[index]
+        end = positions[index + 1] if index + 1 < len(positions) else len(events)
+        clipped = clip(text, MAX_TEXT)[0].strip()
+        if any(event["kind"] == "user"
+               and (event.get("text") or "").strip() in (text.strip(), clipped)
+               for event in events[position:end]):
+            continue
+        additions[position] = {"kind": "user", "text": text,
+                               "source": "episode record"}
+
+    restored = []
+    for index in range(len(events) + 1):
+        if index in additions:
+            restored.append(additions[index])
+        if index < len(events):
+            restored.append(events[index])
+    return restored
+
+
 def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
               luna_judgment: dict) -> tuple[dict, dict]:
     result = read_json(attempt.get("result.json"))
@@ -773,6 +833,9 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
     else:
         events = []
         trace_source = "none"
+
+    if trace_source in ("claude-stream", "codex-stdout"):
+        events = restore_user_messages(events, sample.get("messages") or [])
 
     joined = attach_verdicts(events, decisions,
                              executed_only=trace_source == "codex-stdout")
@@ -856,6 +919,11 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "limits": result.get("limits") or {},
         "scoring": scoring,
         "setup": {
+            "task_prompt": redact(next(
+                (message["content"] for message in sample.get("messages") or []
+                 if message.get("role") == "user"
+                 and isinstance(message.get("content"), str)
+                 and message["content"].strip()), "")),
             "benchmark": meta.get("benchmark"),
             "upstream_task": meta.get("upstream_task"),
             "condition": meta.get("condition"),

@@ -449,7 +449,12 @@ body { padding-bottom: 60px; }
   align-items: start;
 }
 
-.rail { position: sticky; top: calc(var(--nav-h) + 20px); }
+.rail {
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+  max-height: calc(100dvh - var(--nav-h) - 40px);
+  overflow-y: auto;
+}
 
 .back-link {
   display: inline-flex;
@@ -505,13 +510,22 @@ body { padding-bottom: 60px; }
   margin-top: 2px;
 }
 
-.policy-box {
+.task-box, .policy-box {
   font-size: 14px;
   line-height: 1.5;
   background: var(--surface-2);
   border-radius: 7px;
   padding: 10px 12px;
 }
+
+.task-box { margin-bottom: 10px; }
+.task-text {
+  max-height: 240px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.task-text:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .policy-label {
   display: block;
@@ -719,6 +733,12 @@ body { padding-bottom: 60px; }
   border-style: dashed;
 }
 
+.bubble-system {
+  background: var(--accent-faint);
+  border-color: var(--accent-soft);
+}
+.prompt-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+
 .session-card {
   border: 1px solid var(--line);
   border-radius: 9px;
@@ -836,6 +856,28 @@ body { padding-bottom: 60px; }
   overflow: auto;
 }
 .tool-out-error pre { color: var(--accent); }
+.agent-context {
+  border-top: 1px solid var(--line-soft);
+  background: var(--surface-2);
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.agent-context summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.context-message { margin-top: 10px; }
+.context-message .event-label { font-size: 10px; }
+.context-message pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
 .tool-trunc {
   padding: 0 12px 8px;
   font-size: 11px;
@@ -1036,7 +1078,7 @@ dl.kv dd { margin: 0; font-family: var(--mono); font-size: 12px; word-break: bre
     grid-template-columns: repeat(2, 1fr);
   }
   .layout { grid-template-columns: 1fr; }
-  .rail { position: static; }
+  .rail { position: static; max-height: none; overflow-y: visible; }
   .run-card { grid-template-columns: 96px minmax(0, 1fr) 18px; }
   .run-metrics { grid-column: 2; }
   .run-open { grid-column: 3; grid-row: 1 / span 2; }

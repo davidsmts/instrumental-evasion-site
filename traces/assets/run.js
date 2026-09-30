@@ -8,6 +8,7 @@
     sub: document.getElementById('s-sub'),
     outcome: document.getElementById('s-outcome'),
     basis: document.getElementById('s-basis'),
+    task: document.getElementById('s-task'),
     policy: document.getElementById('s-policy'),
     stats: document.getElementById('s-stats'),
     coverage: document.getElementById('s-coverage'),
@@ -59,6 +60,22 @@
       escapeHtml(event.verdict) + '</span>';
   }
 
+  function agentContext() {
+    var setup = DATA.setup || {};
+    var messages = [
+      ['Block message', setup.block_message],
+      ['Additional context', setup.refusal_context_message]
+    ].filter(function (message) { return message[1]; });
+    if (!messages.length) return '';
+    return '<details class="agent-context"' + (el.expand.checked ? ' open' : '') +
+      '><summary>Context sent to agent</summary>' +
+      messages.map(function (message) {
+        return '<div class="context-message"><span class="event-label">' +
+          escapeHtml(message[0]) + '</span><pre>' + escapeHtml(message[1]) +
+          '</pre></div>';
+      }).join('') + '</details>';
+  }
+
   function denialCard(link) {
     var heading = link.callNumber
       ? 'Tool call #' + link.callNumber
@@ -70,6 +87,7 @@
       '<pre class="tool-cmd">' + escapeHtml(link.input || '(input not recorded)') + '</pre>' +
       '<div class="denial-reason"><span>Monitor reason</span>' +
       escapeHtml(link.reason || 'No reason was recorded.') + '</div>' +
+      agentContext() +
       '<footer>The guardrail denied this proposal. The tool call did not run.</footer></div>';
   }
 
@@ -115,7 +133,7 @@
           (event.reason
             ? '<div class="monitor-reason"><span class="mr-label">monitor</span>' +
               escapeHtml(event.reason) + '</div>'
-            : '') + '</div>';
+            : '') + (event.blocked ? agentContext() : '') + '</div>';
 
       case 'tool_result':
         var open = el.expand.checked ? ' open' : '';
@@ -147,7 +165,8 @@
             escapeHtml((DATA.setup || {}).refusal_context_message ||
               'The preceding tool call was denied by a runtime guardrail.') +
             '</div><div class="notice-detail"><strong>The export does not ' +
-            'contain a reliable link to the proposed call.</strong></div></div>';
+            'contain a reliable link to the proposed call.</strong></div>' +
+            agentContext() + '</div>';
         }
         return '<div class="notice notice-' + escapeHtml(event.flavor || 'info') + '">' +
           '<div class="notice-title">' + escapeHtml(event.title || '') + '</div>' +
@@ -233,6 +252,30 @@
     var decisionCursor = 0;
     var insertedBlocks = 0;
 
+    function addSystemPrompt() {
+      var prompt = (DATA.setup || {}).system_prompt;
+      if (!prompt) return;
+      rowItems.push('<div class="row row-system-prompt">' +
+        gutter({ i: 'system-prompt' }) + '<div class="row-body">' +
+        '<div class="bubble bubble-system">' + label('System prompt addition') +
+        '<div class="prompt-text">' + escapeHtml(prompt) + '</div>' +
+        '</div></div></div>');
+    }
+
+    // Stdout exports omit session metadata. Show the configured prompt before
+    // their first event, with an episode header based on the recorded model.
+    var hasSessionStart = DATA.events.some(function (event) {
+      return event.kind === 'session_start';
+    });
+    var promptShown = false;
+    if (!hasSessionStart && (DATA.setup || {}).system_prompt) {
+      var start = { kind: 'session_start', i: 'episode-start', model: DATA.agent_model };
+      rowItems.push('<div class="row row-session_start">' + gutter(start) +
+        '<div class="row-body">' + body(start) + '</div></div>');
+      addSystemPrompt();
+      promptShown = true;
+    }
+
     function addUnmatchedBlocks(beforeDecision) {
       if (DATA.trace_source !== 'codex-stdout') return;
       while (decisionCursor < DATA.decisions.length &&
@@ -266,6 +309,10 @@
       rowItems.push('<div class="row row-' + event.kind + '">' +
         gutter(event, numbers[event.i]) +
         '<div class="row-body">' + html + '</div></div>');
+      if (event.kind === 'session_start' && !promptShown) {
+        addSystemPrompt();
+        promptShown = true;
+      }
     });
     addUnmatchedBlocks(Infinity);
     var rows = rowItems.join('');
@@ -310,7 +357,8 @@
           escapeHtml(d.decision) + '</span></header>' +
           '<pre class="tool-cmd">' + escapeHtml(d.input) + '</pre>' +
           '<div class="decision-reason"><span>Monitor reason</span>' +
-          escapeHtml(d.reason || 'Not provided') + '</div></article>';
+          escapeHtml(d.reason || 'Not provided') + '</div>' +
+          (d.blocked ? agentContext() : '') + '</article>';
       }).join('') + '</div>';
   }
 
@@ -415,6 +463,8 @@
     el.basis.textContent = DATA.basis
       ? DATA.basis.replace(/_/g, ' ')
       : (DATA.solved ? 'task completed' : '');
+    el.task.textContent = (DATA.setup || {}).task_prompt ||
+      'The task prompt was not recorded in this export.';
     el.policy.innerHTML = '<span class="policy-label">policy constraint</span>' +
       escapeHtml(IME.policyConstraint(DATA.policy_constraint || DATA.key_step) ||
         DATA.policy || '–');
@@ -484,7 +534,10 @@
     });
   });
 
-  el.expand.addEventListener('change', renderTrace);
+  el.expand.addEventListener('change', function () {
+    renderTrace();
+    renderDecisions();
+  });
 
   el.jump.addEventListener('change', function () {
     var wanted = parseInt(el.jump.value, 10);

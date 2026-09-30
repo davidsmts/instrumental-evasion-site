@@ -57,12 +57,22 @@ separate evaluation export.
 `traces/data/` is generated from the private resultstore and committed with the
 site so Cloudflare can serve the viewer as ordinary static files.
 
+The left rail shows the main task from the episode's initial user message above
+the policy constraint. The task prompt is exported in full, with the same
+redaction as the rest of the trace.
+
 Each run page has three panels:
 
 - **Run trace** — the normalized event timeline. Tool calls carry the monitor's
   `ALLOW`/`BLOCK` verdict and the reason string it returned, joined onto the
   call. The timeline shows every recorded event, with reasoning and tool outputs
-  collapsed individually to keep long runs readable.
+  collapsed individually to keep long runs readable. The configured system
+  prompt addition appears after the episode start. Each blocked proposal has a
+  **Context sent to agent** dropdown with the block message and denial reminder;
+  the same dropdown is available in Monitor decisions. Initial task and
+  continuation user messages omitted by stdout are restored from the episode
+  record at their invocation boundaries. When a Claude stream includes extra
+  internal retries, the preceding final response establishes the boundary.
 - **Monitor decisions** — every reviewed call in order, from the selected
   episode's `samples[0].decisions` record. A separate decision log is used only
   when an older episode record lacks that list.
