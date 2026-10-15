@@ -22,6 +22,8 @@
   };
 
   var FILTERS = {
+    collection: document.getElementById('f-collection'),
+    campaign: document.getElementById('f-campaign'),
     model: document.getElementById('f-model'),
     source: document.getElementById('f-source'),
     task: document.getElementById('f-task'),
@@ -109,23 +111,26 @@
           return '<td><span class="matrix-cell" data-empty>·</span></td>';
         }
         var evaded = cell.filter(function (r) { return r.outcome === 'evaded'; }).length;
+        var valid = cell.filter(function (r) { return r.outcome !== 'invalid'; }).length;
         return '<td><button class="matrix-cell" style="background:' +
           shade(evasionRate(cell)) + '"' +
           ' data-model="' + IME.escapeHtml(model) + '"' +
           ' data-source="' + IME.escapeHtml(source) + '"' +
-          ' title="' + evaded + ' of ' + cell.length + ' runs reached a ' +
-          'prohibited outcome: ' + IME.escapeHtml(model) + ' on ' +
+          ' title="' + evaded + ' of ' + valid + ' valid attempts; ' +
+          (cell.length - valid) + ' invalid attempts excluded: ' + IME.escapeHtml(model) + ' on ' +
           IME.escapeHtml(source) + '">' +
-          '<span class="cell-rate">' + evaded + '/' + cell.length + '</span>' +
+          '<span class="cell-rate">' + evaded + '/' + valid + '</span>' +
           '</button></td>';
       }).join('');
 
       var evadedAll = mine.filter(function (r) { return r.outcome === 'evaded'; }).length;
+      var validAll = mine.filter(function (r) { return r.outcome !== 'invalid'; }).length;
       return '<tr><th class="row-head">' + IME.escapeHtml(model) + '</th>' + cells +
         '<td class="matrix-total"><button class="matrix-cell matrix-cell-total"' +
         ' data-model="' + IME.escapeHtml(model) + '" data-source=""' +
-        ' title="All 150 runs for ' + IME.escapeHtml(model) + '">' +
-        evadedAll + '/' + mine.length + '</button></td></tr>';
+        ' title="' + mine.length + ' archived attempts; ' + (mine.length - validAll) +
+        ' invalid attempts excluded for ' + IME.escapeHtml(model) + '">' +
+        evadedAll + '/' + validAll + '</button></td></tr>';
     }).join('');
 
     el.matrix.innerHTML = head + body + '</tbody>';
@@ -140,11 +145,11 @@
       el.runs.scrollIntoView({ block: 'start' });
     });
 
-    el.legend.innerHTML = 'runs reaching a prohibited outcome / runs in the cell ' +
+    el.legend.innerHTML = 'prohibited outcomes / valid archived attempts ' +
       [0, 0.25, 0.5, 0.75, 1].map(function (r) {
         return '<span class="legend-swatch" style="background:' + shade(r) + '"></span>';
-      }).join('') + ' none → all · cells count runs, not tasks. The ' +
-      'leaderboard\'s best-of-three rate is per task, over three runs each.';
+      }).join('') + ' none → all · invalid attempts are excluded from denominators. ' +
+      'Archive counts combine campaigns and effort settings; they are not leaderboard rates.';
   }
 
   function buildStats() {
@@ -157,7 +162,9 @@
     var stats = [
       [IME.number(RUNS.length), 'episodes'],
       [String(MODEL_ORDER.length), 'agents'],
-      [String(Object.keys(tasks).length), 'task–policy pairs'],
+      [String(Object.keys(tasks).length), 'task IDs'],
+      [String(RUNS.filter(function (r) { return r.outcome === 'invalid'; }).length),
+        'native-invalid attempts'],
       [IME.number(evaded), 'reached a prohibited outcome'],
       [IME.compact(calls), 'tool calls'],
       [IME.compact(blocks), 'logged blocks']
@@ -180,6 +187,15 @@
   }
 
   function buildFilters() {
+    fillSelect(FILTERS.collection, [
+      ['figure1_repeated', 'Figure 1 repeated-run cohort'],
+      ['figure1_attempt', 'Figure 1 attempt-rate evidence']
+    ]);
+    var campaigns = {};
+    RUNS.forEach(function (r) { if (r.campaign) campaigns[r.campaign] = true; });
+    fillSelect(FILTERS.campaign, Object.keys(campaigns).sort().map(function (c) {
+      return [c, c.replace(/_/g, ' ')];
+    }));
     fillSelect(FILTERS.model, MODEL_ORDER.map(function (m) { return [m, m]; }));
     fillSelect(FILTERS.source, SOURCE_ORDER.filter(function (s) {
       return RUNS.some(function (r) { return r.source === s; });
@@ -201,7 +217,8 @@
 
   function matchesEvidence(run) {
     switch (FILTERS.evidence.value) {
-      case 'full': return run.trace_source !== 'codex-stdout';
+      case 'full': return run.trace_source === 'codex-session' || run.trace_source === 'claude-stream';
+      case 'missing': return run.trace_source === 'none';
       case 'blocked': return (run.blocked_calls || run.blocked_proposals) > 0;
       case 'stdin': return run.unreviewed_stdin > 0;
       default: return true;
@@ -209,6 +226,8 @@
   }
 
   function matches(run) {
+    if (FILTERS.collection.value && run.collection !== FILTERS.collection.value) return false;
+    if (FILTERS.campaign.value && run.campaign !== FILTERS.campaign.value) return false;
     if (FILTERS.model.value && run.model_label !== FILTERS.model.value) return false;
     if (FILTERS.source.value && run.source !== FILTERS.source.value) return false;
     if (FILTERS.task.value && run.task !== FILTERS.task.value) return false;
@@ -218,7 +237,8 @@
     if (!q) return true;
     return [run.run_id, run.task, run.task_label, run.model_label, run.agent_model,
       run.source, run.scaffold, run.policy, run.key_step, run.outcome,
-      run.stop_reason, run.basis].join(' ').toLowerCase().indexOf(q) >= 0;
+      run.stop_reason, run.basis, run.campaign, run.reasoning_effort,
+      run.infrastructure_failure].join(' ').toLowerCase().indexOf(q) >= 0;
   }
 
   var SORTS = {
@@ -256,6 +276,9 @@
       out += ' <span class="chip" title="' + IME.escapeHtml(
         IME.traceSourceNote('codex-stdout')) + '">executed calls only</span>';
     }
+    if (run.trace_source === 'none') out += ' <span class="chip">no CLI transcript</span>';
+    if (run.reasoning_effort) out += ' <span class="chip">' +
+      IME.escapeHtml(run.reasoning_effort) + ' effort</span>';
     return out;
   }
 
@@ -272,10 +295,12 @@
       '<div class="run-status"><span class="verdict verdict-' + run.outcome +
         '" title="' + IME.escapeHtml(IME.outcomeTitle(run.outcome)) + '">' +
         IME.outcomeLabel(run.outcome) + '</span>' +
-        '<span class="run-number">run ' + (run.epoch + 1) + ' of 3</span></div>' +
+        '<span class="run-number">' + IME.runLabel(run) + '</span></div>' +
       '<div class="run-copy"><h3>' + IME.escapeHtml(run.task_label) + '</h3>' +
         '<p class="run-sub">' + IME.escapeHtml(run.model_label) + ' · ' +
         IME.escapeHtml(run.source) + ' · ' + IME.escapeHtml(run.scaffold) + '</p>' +
+        (run.campaign ? '<p class="run-sub run-campaign">' +
+          IME.escapeHtml(run.campaign.replace(/_/g, ' ')) + '</p>' : '') +
         '<p class="run-step"><span>Policy constraint</span>' +
         IME.escapeHtml(IME.policyConstraint(run.policy_constraint || run.key_step) ||
           'Not recorded') + '</p>' +

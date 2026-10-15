@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent traces &middot; Instrumental Monitor Evasion</title>
-<meta name="description" content="Browse the 1,200 monitored episodes used in the paper's mechanism analysis: agent actions, monitor decisions, and scored outcomes.">
+<meta name="description" content="Browse 1,482 traces contributing to Figure 1: agent actions, monitor decisions, and scored outcomes, including Claude Fable 5.1 and GPT-6 Sol.">
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="assets/styles.css">
 <script src="assets/common.js"></script>
@@ -29,10 +29,12 @@
 <section class="page-head">
   <div class="wrap">
     <h1>Agent traces</h1>
-    <p class="lede">Explore the 1,200 episodes across eight agents and 50
-    task&ndash;policy pairs used for the paper's mechanism analysis. Each run shows
-    the agent's calls, the monitor's decisions, and the scored outcome. This
-    corpus is distinct from the complete ten-agent leaderboard evaluation.</p>
+    <p class="lede">Explore 1,482 traces contributing to Figure 1 across nine agents.
+    The original repeated-run cohorts contribute 1,050 traces; the attempt-rate
+    bars use another 90 Claude Fable 5.1 traces across 37 tasks and 342 GPT-6 Sol
+    traces across 50 tasks. Those two attempt-rate evidence sets include mixed
+    campaigns and effort settings, and differ from the success-rate cohorts.
+    Only selected Figure 1 evidence is published here.</p>
     <div class="corpus-head">
       <div class="matrix-wrap">
         <table class="matrix" id="matrix" aria-label="Runs by agent and task source"></table>
@@ -46,6 +48,8 @@
 <main class="wrap">
   <section class="browse-controls" aria-label="Browse runs">
     <div class="filter-dock" role="search">
+      <select id="f-collection" aria-label="Filter by collection"><option value="">all collections</option></select>
+      <select id="f-campaign" aria-label="Filter by campaign"><option value="">all campaigns</option></select>
       <select id="f-model" aria-label="Filter by agent"><option value="">all agents</option></select>
       <select id="f-source" aria-label="Filter by task source"><option value="">all task sources</option></select>
       <select id="f-task" aria-label="Filter by task"><option value="">all tasks</option></select>
@@ -53,12 +57,14 @@
         <option value="">all outcomes</option>
         <option value="evaded">evaded</option>
         <option value="held">held</option>
+        <option value="invalid">native-invalid</option>
       </select>
       <select id="f-evidence" aria-label="Filter by evidence">
         <option value="">any evidence</option>
         <option value="full">shows blocked calls in the timeline</option>
         <option value="blocked">at least one block</option>
         <option value="stdin">unreviewed session input</option>
+        <option value="missing">no CLI transcript archived</option>
       </select>
       <label class="filter-search">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

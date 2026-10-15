@@ -10,14 +10,17 @@ The payloads are JSON wrapped in an IME.receive(...) call rather than plain
 .json files, because the pages have to work when they are opened straight from
 disk: a browser blocks fetch() on file:// but still loads a <script src>.
 
-Corpus. The viewer publishes the original exact-three selection — eight agents
-x 50 task-policy pairs x exactly three selected runs. The current leaderboard
-also includes later cohorts. The selection itself is read from
+Corpus. Only traces contributing to the published Figure 1 are included:
+seven original agents x 50 tasks x three selected runs, plus the 90 Fable
+and 342 GPT-6 Sol attempts used by its Luna attempt-rate bars. The original
+selection is read from
 `model_comparison/20260919_figure1_exact3_v1/summary.json`; an attempt's
 artifacts are then located anywhere in the store, because the same attempt is
 exported into several snapshots and the copies are not equally complete.
 The Luna evasion attempt judgments are joined from the September 23 Figure 1
 report by selected attempt ID; they do not affect the evasion success score.
+`tools/figure1_selection.json` freezes the later selected IDs, artifact hashes,
+and the provenance and aggregation of the published attempt-rate evidence.
 
 Sources per run, in the order they are preferred:
 
@@ -40,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import hashlib
 import json
 import os
 import re
@@ -52,6 +56,12 @@ OUT = REPO / "traces" / "data"
 
 SELECTION = "model_comparison/20260919_figure1_exact3_v1/summary.json"
 LUNA_JUDGMENTS = "model_comparison/20260923_luna_figure1_judgments_v1/report.json"
+CAMPAIGNS = "recent_evaluations/20260923_fable_sol_campaigns_v1"
+COLLECTIONS = {
+    "figure1_repeated": "Figure 1 repeated-run cohort",
+    "figure1_attempt": "Figure 1 attempt-rate evidence",
+}
+FIGURE1_SELECTION = REPO / "tools" / "figure1_selection.json"
 
 # Tool output is the bulk of the payload and nobody reads 200 KB of it in a
 # browser. Keep the head and tail; the resultstore stays authoritative.
@@ -70,14 +80,15 @@ MODELS = {
     "luna": ("GPT-5.6 Luna", "gpt-5.6-luna"),
     "glm53flash": ("GLM-5.3 Flash", "glm-5.3-flash"),
     "sol": ("GPT-5.6 Sol", "gpt-5.6-sol"),
-    "sonnet5": ("Claude Sonnet 5", "claude-sonnet-5"),
+    "gpt6_sol": ("GPT-6 Sol", "gpt-6-sol"),
+    "fable51": ("Claude Fable 5.1", "claude-fable-5.1"),
     "opus5": ("Claude Opus 5", "claude-opus-5"),
     "astra": ("GPT-6 Astra", "gpt-6-astra"),
 }
 
 # Leaderboard order, so the catalog opens in the same order as the paper.
 MODEL_ORDER = ["dsflash", "muse", "luna", "glm53flash", "sol",
-               "sonnet5", "opus5", "astra"]
+               "gpt6_sol", "fable51", "opus5", "astra"]
 
 # Task id prefix -> the source the paper credits it to.
 SOURCES = [
@@ -269,7 +280,11 @@ def index_store(store: Path, wanted: set[str]) -> dict[str, Attempt]:
     for root, dirs, files in os.walk(store):
         if ".git" in dirs:
             dirs.remove(".git")
-        if "result.json" in files or "result.json.gz" in files:
+        # Results and transcripts are stored in separate trees in the newer
+        # campaign archive. Union both attempt roots by the same attempt ID.
+        if any(name in files for name in ("result.json", "result.json.gz",
+                                          "stdout.txt", "stdout.txt.gz",
+                                          "decisions.jsonl", "decisions.jsonl.gz")):
             attempt_id = os.path.basename(root)
             if attempt_id not in wanted:
                 continue
@@ -805,7 +820,8 @@ def restore_user_messages(events: list[dict], messages: list[dict]) -> list[dict
 
 
 def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
-              luna_judgment: dict) -> tuple[dict, dict]:
+              luna_judgment: dict | None, *, collection: str = "figure1_repeated",
+              campaign: str = "") -> tuple[dict, dict]:
     result = read_json(attempt.get("result.json"))
     meta = result.get("metadata") or {}
     sample = (result.get("samples") or [{}])[0]
@@ -877,6 +893,13 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "task_label": pretty_task(task_id),
         "source": source_for(task_id),
         "epoch": epoch,
+        "collection": collection,
+        "collection_label": COLLECTIONS[collection],
+        "campaign": campaign,
+        "native_epoch": sample.get("epoch"),
+        "reasoning_effort": meta.get("agent_reasoning_effort"),
+        "infrastructure_status": sample.get("infrastructure_status"),
+        "infrastructure_failure": sample.get("infrastructure_failure"),
         "policy": meta.get("policy") or result.get("policy") or "",
         "key_step": meta.get("key_step_blocked") or "",
         "monitor": pretty_model(meta.get("monitor_model")),
@@ -913,8 +936,8 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "decisions": decisions,
         "verdicts_joined": joined,
         "episode_id": result.get("episode_id"),
-        "explanation": sample.get("explanation") or "",
-        "answer": sample.get("answer") or "",
+        "explanation": redact(sample.get("explanation") or ""),
+        "answer": redact(sample.get("answer") or ""),
         "usage": usage,
         "limits": result.get("limits") or {},
         "scoring": scoring,
@@ -947,7 +970,7 @@ def build_run(attempt: Attempt, model_key: str, task_id: str, epoch: int,
         "infrastructure": {
             "status": sample.get("infrastructure_status"),
             "failure": sample.get("infrastructure_failure"),
-            "reason": sample.get("infrastructure_reason"),
+            "reason": redact(sample.get("infrastructure_reason") or ""),
         },
     })
     row["events"] = len(events)
@@ -963,6 +986,55 @@ def write_payload(path: Path, key: str, payload) -> int:
         payload, separators=(",", ":"), ensure_ascii=False) + ");\n"
     path.write_text(body, encoding="utf-8")
     return len(body)
+
+
+def campaign_selection(store: Path, existing: set[str]) -> dict[str, dict]:
+    """Export only the frozen attempt IDs that contribute to Figure 1.
+
+    The figure's Luna bars use the full native-valid review, not every raw
+    campaign artifact and not the same cohorts as its success-rate bars.
+    """
+    root = store / CAMPAIGNS
+    manifest = read_json(FIGURE1_SELECTION)
+    inventory = {row["attempt_id"]: row for row in read_json(root / "attempts.json")}
+    selected = {}
+    for row in manifest["attempts"]:
+        attempt_id = row["attempt_id"]
+        if attempt_id in existing or attempt_id in selected:
+            raise ValueError("duplicate campaign attempt: " + attempt_id)
+        if row["model"] not in ("fable51", "gpt6_sol"):
+            raise ValueError("unexpected campaign model: " + row["model"])
+        archived = inventory[attempt_id]
+        if (archived["infrastructure_status"] != "valid"
+                or any(archived[key] != row[key]
+                       for key in ("model", "task", "campaign", "result_stored"))):
+            raise ValueError("Figure 1 inventory mismatch: " + attempt_id)
+        result_path = root / row["result_stored"]
+        if hashlib.sha256(result_path.read_bytes()).hexdigest() != row["result_sha256"]:
+            raise ValueError("Figure 1 result digest mismatch: " + attempt_id)
+        stdout_path = root / row["stdout_stored"]
+        if hashlib.sha256(stdout_path.read_bytes()).hexdigest() != row["stdout_sha256"]:
+            raise ValueError("Figure 1 stdout digest mismatch: " + attempt_id)
+        result = read_json(result_path)
+        sample = result["samples"][0]
+        if (result.get("attempt_id") != attempt_id
+                or sample.get("infrastructure_status") != "valid"
+                or sample.get("epoch") != row["epoch"]):
+            raise ValueError("campaign inventory mismatch: " + attempt_id)
+        selected[attempt_id] = {
+            "model_key": row["model"], "task_id": row["task"],
+            "epoch": sample["epoch"], "campaign": row["campaign"],
+            "luna_judgment": row["luna_judgment"],
+        }
+    for model, expected in manifest["expected_models"].items():
+        rows = [row for row in manifest["attempts"] if row["model"] == model]
+        tasks = {row["task"] for row in rows}
+        supported = {row["task"] for row in rows
+                     if row["luna_judgment"]["route_attempt"] == "supported"}
+        if (len(rows), len(tasks), len(supported)) != (
+                expected["attempts"], expected["tasks"], expected["supported_tasks"]):
+            raise ValueError("Figure 1 aggregation mismatch: " + model)
+    return selected
 
 
 def main() -> int:
@@ -993,6 +1065,10 @@ def main() -> int:
     judgments = {}
     for entry in report["rows"]:
         attempt_id = entry["attempt_id"]
+        # Sonnet was in the historical mechanism corpus but is absent from
+        # the published Figure 1; do not publish its traces in this export.
+        if entry["model"] == "sonnet5":
+            continue
         if attempt_id in judgments:
             raise ValueError("duplicate Luna judgment: " + attempt_id)
         if attempt_id not in selected:
@@ -1013,6 +1089,14 @@ def main() -> int:
     if set(judgments) != set(selected):
         raise ValueError("Luna judgments do not match the selected attempt IDs")
 
+    campaigns = campaign_selection(store, set(selected))
+    for attempt_id, entry in campaigns.items():
+        selected[attempt_id] = (entry["model_key"], entry["task_id"], entry["epoch"])
+        judgments[attempt_id] = {
+            key: redact(value) if isinstance(value, str) else value
+            for key, value in entry["luna_judgment"].items()
+        }
+
     print("selection: " + str(len(selected)) + " attempts; indexing the store…")
     attempts = index_store(store, set(selected))
     print("located: " + str(len(attempts)))
@@ -1028,15 +1112,14 @@ def main() -> int:
             sorted(selected.items(), key=lambda kv: (kv[1][0], kv[1][1], kv[1][2]))):
         attempt = attempts.get(attempt_id)
         if attempt is None:
-            stats["missing"] += 1
-            continue
+            raise ValueError("missing selected attempt: " + attempt_id)
         try:
             row, run = build_run(attempt, model_key, task_id, epoch,
-                                 judgments[attempt_id])
-        except Exception as error:  # a broken export should not stop the build
-            stats["failed"] += 1
-            print("  ! " + attempt_id + ": " + str(error), file=sys.stderr)
-            continue
+                                 judgments.get(attempt_id),
+                                 collection="figure1_attempt" if attempt_id in campaigns else "figure1_repeated",
+                                 campaign=campaigns.get(attempt_id, {}).get("campaign", ""))
+        except Exception as error:
+            raise ValueError("failed to export " + attempt_id) from error
         rows.append(row)
         bytes_written += write_payload(OUT / (attempt_id + ".js"), attempt_id, run)
         stats[row["trace_source"]] += 1
@@ -1051,6 +1134,7 @@ def main() -> int:
             __import__("datetime").timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "model_order": [MODELS[k][0] for k in MODEL_ORDER],
         "source_order": SOURCE_ORDER,
+        "collections": COLLECTIONS,
         "runs": rows,
     }
     bytes_written += write_payload(OUT / "index.js", "index", index)

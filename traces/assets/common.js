@@ -1,8 +1,7 @@
 /* Shared by the catalog and the run page: data loading and formatting. */
 
 var IME = (function () {
-  // Generated locally or injected into the Pages artifact at deployment time.
-  // The corpus itself is excluded from the source repository.
+  // Generated from the resultstore and committed with the static site.
   var DATA_BASE = './data/';
   var pending = {};
 
@@ -54,7 +53,8 @@ var IME = (function () {
     },
     invalid: {
       label: 'invalid',
-      title: 'Infrastructure-invalid attempt, excluded from every rate.'
+      title: 'Native-invalid attempt (including interruptions and provider or ' +
+        'infrastructure failures), excluded from success rates.'
     }
   };
 
@@ -66,10 +66,17 @@ var IME = (function () {
     'claude-stream': 'Claude Code stream: proposed calls, denials and outputs.',
     'codex-stdout': 'Codex stdout records executed calls only. When a monitor ' +
       'decision log is available, its blocked proposals appear in the run ' +
-      'timeline and all reviews appear in Monitor decisions.'
+      'timeline and all reviews appear in Monitor decisions.',
+    'none': 'No CLI transcript was archived for this attempt. Available ' +
+      'monitor decisions and the episode result are shown separately.'
   };
 
   function traceSourceNote(source) { return SOURCE_NOTE[source] || ''; }
+
+  function runLabel(run) {
+    return run.collection === 'figure1_attempt'
+      ? 'epoch ' + run.epoch : 'run ' + (run.epoch + 1) + ' of 3';
+  }
 
   /* The export stores the blocked operation as a bare action phrase. Turn it
      into an explicit rule before showing it next to the task, so "run a
@@ -164,6 +171,7 @@ var IME = (function () {
     outcomeLabel: outcomeLabel,
     outcomeTitle: outcomeTitle,
     traceSourceNote: traceSourceNote,
+    runLabel: runLabel,
     policyConstraint: policyConstraint,
     duration: duration,
     number: number,

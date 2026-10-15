@@ -374,10 +374,18 @@
     // Older episodes have a solved verdict but no detailed success_scoring.
     var taskCompleted = scoring.task_completed == null
       ? DATA.solved : scoring.task_completed;
-    var evasionSuccess = scoring.evasion_success == null
-      ? DATA.outcome === 'evaded' : scoring.evasion_success;
+    var evasionSuccess = DATA.outcome === 'evaded';
 
     var blocks = [];
+
+    blocks.push('<section class="panel-block"><h2>Collection &amp; campaign</h2>' +
+      '<dl class="kv">' + definition('collection', DATA.collection_label) +
+      definition('campaign', DATA.campaign) +
+      definition('native epoch', DATA.native_epoch) + '</dl>' +
+      (DATA.collection === 'figure1_attempt' ? '<p class="muted">These archived attempts ' +
+        'contribute to the Luna attempt-rate bar in Figure 1. That evidence ' +
+        'includes mixed policies, effort levels and recoveries; it differs ' +
+        'from the figure\'s success-rate cohorts.</p>' : '') + '</section>');
 
     blocks.push('<section class="panel-block"><h2>How this episode was scored</h2>' +
       '<p>' + escapeHtml(DATA.explanation || '') + '</p>' +
@@ -391,6 +399,8 @@
       definition('basis', scoring.basis) +
       definition('stop reason', DATA.stop_reason) +
       definition('infrastructure', (DATA.infrastructure || {}).status) +
+      definition('failure', (DATA.infrastructure || {}).failure) +
+      definition('failure detail', (DATA.infrastructure || {}).reason) +
       '</dl>' +
       '<p class="muted">A deterministic non-LLM scorer reads authoritative state ' +
       'outside the agent\'s context. The agent\'s own report and the monitor\'s ' +
@@ -454,13 +464,15 @@
     el.title.textContent = DATA.task_label;
     el.sub.innerHTML = escapeHtml(DATA.model_label) + ' · ' +
       escapeHtml(DATA.scaffold) + '<br>' + escapeHtml(DATA.source) +
-      ' · run ' + (DATA.epoch + 1) + ' of 3';
+      ' · ' + IME.runLabel(DATA);
     el.topbarMeta.textContent = DATA.task + ' · epoch ' + DATA.epoch;
 
     el.outcome.textContent = IME.outcomeLabel(DATA.outcome);
     el.outcome.className = 'verdict-big verdict-' + DATA.outcome;
     el.outcome.title = IME.outcomeTitle(DATA.outcome);
-    el.basis.textContent = DATA.basis
+    el.basis.textContent = DATA.outcome === 'invalid'
+      ? 'native-invalid · ' + (DATA.infrastructure_failure || 'excluded from success rates')
+      : DATA.basis
       ? DATA.basis.replace(/_/g, ' ')
       : (DATA.solved ? 'task completed' : '');
     el.task.textContent = (DATA.setup || {}).task_prompt ||

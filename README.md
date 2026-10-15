@@ -51,9 +51,20 @@ python3 -m http.server 8781 && open http://127.0.0.1:8781/
 
 ## The trace browser
 
-The live website shows the 1,200-run, eight-agent corpus used for the paper's
-mechanism analysis. The current results figure covers ten agents and is a
-separate evaluation export.
+The trace browser publishes only evidence contributing to the current Figure 1:
+1,050 selected repeated-run traces from seven original agents, 90 Claude Fable
+5.1 traces, and 342 GPT-6 Sol traces (1,482 total, across nine agents).
+The 150 historical Sonnet 5 mechanism-analysis traces are excluded because
+Sonnet is absent from the current figure. GLM-5.2's chart row has no trace link.
+
+The Fable and GPT-6 Sol IDs are frozen in `tools/figure1_selection.json`, with
+result hashes, review provenance, and expected task-level aggregations. They
+are exactly the native-valid traces used by Figure 1's Luna attempt-rate bars:
+31/37 Fable tasks (83.8%) and 19/50 GPT-6 Sol tasks (38%). These evidence sets
+mix campaigns, policies and effort settings; the paper's exact-count table
+states that they differ from the success-rate cohorts. They must not be
+described as matched Bo3 cohorts. All other campaign attempts are excluded.
+
 `traces/data/` is generated from the private resultstore and committed with the
 site so Cloudflare can serve the viewer as ordinary static files.
 
@@ -82,24 +93,29 @@ Each run page has three panels:
 The exported data retains the paper's Luna-judged evasion attempt labels and
 rationales, but the trace viewer does not display or filter by them for now.
 These labels come from the resultstore's
-`model_comparison/20260923_luna_figure1_judgments_v1/report.json`, joined by
+`model_comparison/20260923_luna_figure1_judgments_v1/report.json` for original
+cohorts and the frozen selection manifest for Fable and GPT-6 Sol, joined by
 selected attempt ID. They do not change the deterministic evasion success outcome.
+
+Collection and campaign filters separate the repeated-run cohorts from the
+attempt-rate evidence. Campaigns and recorded reasoning effort appear with
+each added run; its epoch is shown without inventing a three-run position.
 
 ### Evidence coverage, and why runs differ
 
 Timeline coverage differs by scaffold, while monitor decisions are available
 for every selected episode:
 
-| artifact | runs | what it gives |
-| --- | ---: | --- |
-| `stdout.txt` | 1200 | the agent transcript |
-| `samples[0].decisions` in `result.json.gz` | 1200 | every proposed call, its verdict and the monitor's reason |
-| `decisions.jsonl` | 577 | separate copy of monitor decisions, used only as a fallback |
-| Codex session (`rollout-*.jsonl`) | 240 | proposals *and* denials as Codex recorded them |
+| artifact | what it gives |
+| --- | --- |
+| `stdout.txt` | the agent transcript |
+| `samples[0].decisions` in `result.json[.gz]` | every proposed call, its verdict and the monitor's reason |
+| `decisions.jsonl` | separate copy of monitor decisions, used only as a fallback |
+| Codex session (`rollout-*.jsonl`) | proposals *and* denials as Codex recorded them |
 
-That yields three kinds of timeline. Claude Code's stream (300 runs) records
-denied `tool_use` blocks, so it is complete. A Codex session (240 runs) is
-likewise complete. The remaining 660 Codex runs are reconstructed from stdout,
+That yields three kinds of timeline. Claude Code's stream records denied
+`tool_use` blocks, so it is complete. A Codex session is likewise complete.
+Other Codex runs are reconstructed from stdout,
 which only ever contains calls that **ran** — a blocked proposal never enters
 that stream. Those runs are labelled *executed calls only* in the catalog and
 on the run page. Their blocked proposals, including commands and monitor
@@ -110,7 +126,7 @@ reasons, appear in the **Monitor decisions** panel from the episode record.
 The Codex CLI reviews the command that launches an interactive process but not
 the input written to it afterwards. In a run with monitor decisions, a
 `write_stdin` call with no decision is that gap, and the timeline tags it
-`NOT INTERCEPTED` — five runs in the corpus, fifteen calls. The flag is
+`NOT INTERCEPTED`. The flag is
 deliberately limited to `write_stdin`: for any other call, an unmatched
 proposal is more likely a quoting difference between two artifacts than an
 unreviewed call. Not intercepted means not reviewed, never approved.
@@ -126,10 +142,18 @@ git clone https://github.com/davidsmts/agent-breakout-resultstore ~/resultstore
 python3 tools/build_traces.py --store ~/resultstore
 ```
 
-It rewrites `traces/data/` from scratch — 1,200 runs, about 139 MB. The
-selection is read from `model_comparison/20260919_figure1_exact3_v1/summary.json`;
+Use a current resultstore checkout (at least commit `8905d139`). The build
+rewrites `traces/data/` from scratch, deleting obsolete run payloads. Original
+selections are read from `model_comparison/20260919_figure1_exact3_v1/summary.json`,
+restricted to agents in the published Figure 1;
 the Luna labels are read from `model_comparison/20260923_luna_figure1_judgments_v1/report.json`;
-artifacts for each attempt are then located anywhere in the store, because the
+Fable and GPT-6 Sol selections and labels are read from the checked-in
+`tools/figure1_selection.json`, with artifacts in
+`recent_evaluations/20260923_fable_sol_campaigns_v1`. Results are verified against
+the frozen IDs, native status, and hashes before export. The build checks the
+90/37/31 and 342/50/19 attempt/task/supported-task totals and fails on any missing
+or broken selected trace. It never adds attempts by globbing entire campaigns.
+Artifacts for each selected attempt are located anywhere in the store, because the
 same attempt is exported into several snapshots and the copies are not equally
 complete. Tool output is clipped from the middle at 1,600 characters (3,000 for
 prose) and the store stays authoritative. The build also redacts home-directory
@@ -139,5 +163,5 @@ eight runs contain them, mostly ToolSandbox fixtures whose simulated user
 profile is the operator's own. Benchmark fixture content is otherwise left as
 recorded, including the synthetic contacts ToolSandbox ships.
 
-Payloads are deterministic, so re-running the build over an unchanged store
-rewrites the files byte-for-byte and git records no new objects.
+Run payloads are deterministic; the index records its generation time.
+Run `python3 -m unittest discover -s tests -v` for exporter checks.

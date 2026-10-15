@@ -28,7 +28,7 @@ var I18N = (function () {
       'auf Sicherheit trainierte Agenten dazu bringen, die Überwachung zu umgehen.',
     'hero.cta.paper': 'Paper lesen (arXiv)',
     'hero.cta.code': 'Code ansehen',
-    'hero.cta.traces': '1.200 Läufe ansehen',
+    'hero.cta.traces': '1.482 Läufe ansehen',
     'hero.cta.leaderboard': 'Ergebnisse ansehen',
 
     // --------------------------------------------------------- results figure
@@ -99,10 +99,10 @@ var I18N = (function () {
       'abbrechen oder ihr Budget ausschöpfen, gelten als erfolglos.',
     'lb.note4': '<span class="n">2</span> Ohne Überwachung lösen DeepSeek V4 Flash ' +
       'und GPT-5.6 Luna in einem Kontrolllauf jeweils alle 50 Aufgaben.',
-    'lb.note5': '<span class="n">3</span> Der Trace-Browser zeigt die 1.200 Läufe ' +
-      'von acht Agenten, die im Paper für die Analyse der Umgehungswege ' +
-      'verwendet wurden. Die später getesteten Agenten dieser Abbildung ' +
-      'sind dort nicht enthalten.',
+    'lb.note5': '<span class="n">3</span> Der Trace-Browser enthält nur Evidenz für ' +
+      'Abbildung 1: 1.050 Läufe von sieben ursprünglichen Agenten sowie 90 Fable- ' +
+      'und 342 GPT-6-Sol-Läufe für die Versuchsrate. Letztere stammen aus mehreren ' +
+      'Kampagnen und Reasoning-Stufen; ihre Auswahl unterscheidet sich von den Erfolgsraten.',
 
     // --------------------------------------------------------------- setup
 

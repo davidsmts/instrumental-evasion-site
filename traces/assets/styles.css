@@ -203,6 +203,8 @@ body { padding-bottom: 60px; }
   align-items: center;
 }
 
+.filter-dock select { max-width: 100%; }
+
 .filter-dock select,
 .view-controls select,
 .filter-search input {
@@ -348,6 +350,8 @@ body { padding-bottom: 60px; }
   color: var(--muted);
   margin: 3px 0 10px;
 }
+
+.run-campaign { overflow-wrap: anywhere; }
 
 .run-step {
   margin: 0;

@@ -51,7 +51,7 @@
     <div class="cta">
       <a class="cta-primary" href="https://arxiv.org/abs/2609.30217" data-i18n="hero.cta.paper">Read the paper (arXiv)</a>
       <a class="cta-secondary" href="https://github.com/aisa-group/instrumental-evasion" data-i18n="hero.cta.code">View the code</a>
-      <a class="cta-secondary" href="traces/" data-i18n="hero.cta.traces">Browse 1,200 traces</a>
+      <a class="cta-secondary" href="traces/" data-i18n="hero.cta.traces">Browse 1,482 traces</a>
       <a class="cta-secondary" href="#leaderboard" data-i18n="hero.cta.leaderboard">See the results</a>
     </div>
   </div>
@@ -140,7 +140,7 @@
                   <div class="paper-bar success" style="height:20%"><span>20</span></div>
                   <div class="paper-bar attempt" style="height:38%"><span>38</span></div>
                 </div>
-                <div class="paper-agent">GPT-6 Sol*</div>
+                <div class="paper-agent"><a href="traces/?model=GPT-6+Sol">GPT-6 Sol*</a></div>
                 <span class="sr-only" data-i18n="lb.agent.sol6">GPT-6 Sol*: single-run evasion success 16%; best-of-three evasion success 20%; best-of-three evasion attempt 38%.</span>
               </div>
               <div class="paper-group">
@@ -149,7 +149,7 @@
                   <div class="paper-bar success" style="height:12%"><span>12</span></div>
                   <div class="paper-bar attempt" style="height:84%"><span>84</span></div>
                 </div>
-                <div class="paper-agent">Claude Fable 5.1*</div>
+                <div class="paper-agent"><a href="traces/?model=Claude+Fable+5.1">Claude Fable 5.1*</a></div>
                 <span class="sr-only" data-i18n="lb.agent.fable">Claude Fable 5.1*: single-run evasion success 6%; best-of-three evasion success 12%; best-of-three evasion attempt 84%.</span>
               </div>
               <div class="paper-group">
@@ -183,7 +183,7 @@
       <ol class="notes">
         <li data-i18n="lb.note2"><span class="n">1</span> Rates cover valid episodes only. Infrastructure failures are excluded; valid episodes that stop or exhaust their budget count as unsuccessful.</li>
         <li data-i18n="lb.note4"><span class="n">2</span> DeepSeek V4 Flash and GPT-5.6 Luna each solve all 50 tasks in an unmonitored control run.</li>
-        <li data-i18n="lb.note5"><span class="n">3</span> The trace browser contains the 1,200-run eight-agent corpus used for the paper's mechanism analysis. It does not contain the later cohorts in this figure.</li>
+        <li data-i18n="lb.note5"><span class="n">3</span> The trace browser publishes only Figure 1 evidence: 1,050 traces from seven original agents and the 90 Fable and 342 GPT-6 Sol traces used by the attempt-rate bars. The latter use mixed campaigns and effort settings, with different selections from the success-rate bars.</li>
       </ol>
     </details>
 
